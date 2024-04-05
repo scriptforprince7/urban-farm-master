@@ -1,0 +1,81 @@
+{% extends "partials/base.html" %} {% load static %} {% block main %}
+
+<main>
+  <div class="full-width_padding">
+    <div class="breadcrumb mb-0 d-md-block flex-grow-1">
+      <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium"
+        >Home</a
+      >
+      <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1"
+        >&#10093;</span
+      >
+      <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium"
+        >Shop by Category</a
+      >
+    </div>
+  </div>
+  <section class="">
+    <div class="" style="border-color: #f5e6e0">
+      <div class="shop-banner position-relative">
+        <div class="background-img" style="background-color: #f5e6e0">
+          <img
+            loading="lazy"
+            src="{% static 'images/shop/main-category-banner.jpg' %}"
+            width="1759"
+            height="420"
+            alt="Pattern"
+            class="slideshow-bg__img object-fit-cover"
+          />
+        </div>
+
+        <div
+          class="shop-banner__content container position-absolute start-50 top-50 translate-middle"
+        ></div>
+        <!-- /.shop-banner__content -->
+      </div>
+      <!-- /.shop-banner position-relative -->
+    </div>
+    <!-- /.full-width_border -->
+  </section>
+  <section class="lookbook container" style="margin-top: 30px">
+    <h2 class="page-title" style="color: #004818">
+      <span style="text-transform: capitalize"> Shop by</span>
+      Categories
+    </h2>
+    <hr />
+  </section>
+  <section class="lookbook-collection">
+    <div class="container">
+      <div class="row">
+        {% for main in main_cat %}
+        <div class="col-lg-4 d-flex flex-column">
+          <a
+            href="{% url 'core:category' main.main_title %}"
+            class="lookbook-collection__item position-relative flex-grow-1 mb-4 effect border-plus"
+          >
+            <div class="lookbook-collection__item-image">
+              <img
+                loading="lazy"
+                src="{{main.image.url}}"
+                width="690"
+                height="399"
+                alt=""
+              />
+            </div>
+            <div
+              class="content_abs content_bottom content_left content_bottom-md content_left-md"
+            >
+              <p class="text-uppercase mb-1 white-color"></p>
+              <h3 class="white-color">{{main.main_title}}</h3>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="mb-5 pb-xl-5"></div>
+
+{% endblock main %}
