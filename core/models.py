@@ -224,6 +224,33 @@ class ProductVariantTypes(models.Model):
     class Meta:
         verbose_name_plural = "Product Variant Types"
 
+class ProductVariation(models.Model):
+    product_variant = models.ForeignKey(ProductVarient, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product_variant_type = models.ForeignKey(ProductVariantTypes, on_delete=models.SET_NULL, null=True)
+    variation_title = models.CharField(max_length=500, default="Product Variation")
+    status = models.BooleanField(default=True)
+    in_stock = models.BooleanField(default=True)
+    date = models.DateField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Product Variation"
+
+class ProductVariationTypes(models.Model):
+    product_variant = models.ForeignKey(ProductVarient, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product_variant_type = models.ForeignKey(ProductVariantTypes, on_delete=models.SET_NULL, null=True)
+    product_variation = models.ForeignKey(ProductVariation, on_delete=models.SET_NULL, null=True)
+    variation_type_title = models.CharField(max_length=500, default="Product Variation")
+    varient_type_price = models.DecimalField(max_digits=9999, decimal_places=2, default="1")
+    gst_rate = models.CharField(max_length=12, default="5%")
+    status = models.BooleanField(default=True)
+    in_stock = models.BooleanField(default=True)
+    date = models.DateField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Product Variation Types"
+
 class CartOrder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank = True)
     price = models.DecimalField(max_digits=99999, decimal_places=2, default="1")
