@@ -237,20 +237,67 @@
           <div class="product-single__swatches">
               <div class="product-swatch text-swatches">
                   <label>{{ variant.title }}</label>
-          
+              
                   <div class="swatch-list">
-                    {% for variant_type in product_variant_types %}
-                    {% if variant_type.product_variant == variant %}
-                    <input type="radio" name="size" id="swatch-{{ variant_type.id }}" {% if variant_type.id == 1 %}checked{% endif %} data-price="{{ variant_type.varient_price }}" data-gst="{{ variant_type.gst_rate }}" />
-                    <label class="swatch js-swatch {% if variant_type.id == 1 %}selected-swatch{% endif %}" for="swatch-{{ variant_type.id }}" aria-label="{{ variant_type.variant_title }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ variant_type.variant_title }}">{{ variant_type.variant_title }}</label>
-                    {% endif %}
-                    {% endfor %}
+                      {% for variant_type in product_variant_types %}
+                          {% if variant_type.product_variant == variant %}
+                              <input type="radio" name="size" id="swatch-{{ variant_type.id }}" {% if variant_type.id == 1 %}checked{% endif %} data-price="{{ variant_type.varient_price }}" data-gst="{{ variant_type.gst_rate }}" />
+                              <label class="swatch js-swatch {% if variant_type.id == 1 %}selected-swatch{% endif %}" for="swatch-{{ variant_type.id }}" aria-label="{{ variant_type.variant_title }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ variant_type.variant_title }}">{{ variant_type.variant_title }}</label>
+                          {% endif %}
+                      {% endfor %}
                   </div>
-          
+              
               </div>
           </div>
-          {% endfor %}
-          
+      {% endfor %}
+
+      {% if product_variations %}
+      {% for variation in product_variations %}
+          <div class="product-single__swatches">
+              <div class="product-swatch text-swatches">
+                  <label>{{ variation.variation_title }}</label>
+                  
+                  <div class="swatch-list">
+                      {% for variant_type in product_variation_types %}
+                          {% if variant_type.product_variation == variation %}
+                              <input type="radio" name="size" id="swatch-{{ variant_type.id }}" {% if variant_type.id == 1 %}checked{% endif %} data-price="{{ variant_type.varient_price }}" data-gst="{{ variant_type.gst_rate }}" />
+                              <label class="swatch js-swatch {% if variant_type.id == 1 %}selected-swatch{% endif %}" for="swatch-{{ variant_type.id }}" aria-label="{{ variant_type.variation_title }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ variant_type.variation_title }}">{{ variant_type.variation_title }}</label>
+                          {% endif %}
+                      {% endfor %}
+                  </div>
+                  
+              </div>
+          </div>
+      {% endfor %}
+  {% endif %}
+  
+
+
+      {% comment %} {% if product_variations %}
+          <div class="product-variations">
+              <h3>Product Variations:</h3>
+              <ul>
+                  {% for variation_type in product_variation_types %}
+                      <li>{{ variation_type.variation_title }}:</li>
+                      <ul>
+                          {% for variation in product_variations %}
+                              {% if variation.product_variation == variation_type %}
+                                  <li>{{ variation.variation_title }}</li>
+                                  {% for variation_price in product_variation_types_prices %}
+                                      {% if variation_price.product_variation_types == variation %}
+                                          <li>Price: {{ variation_price.varient_type_price }}</li>
+                                          <li>GST Rate: {{ variation_price.gst_rate }}</li>
+                                      {% endif %}
+                                  {% endfor %}
+                              {% endif %}
+                          {% endfor %}
+                      </ul>
+                  {% endfor %}
+              </ul>
+          </div>
+      {% endif %} {% endcomment %}
+      
+      
           <div class="product-single__addtocart">
             <div class="qty-control position-relative">
               <input

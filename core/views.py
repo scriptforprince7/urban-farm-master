@@ -686,6 +686,9 @@ def product_new(request, title):
     product = Product.objects.get(title=title)
     product_variants = ProductVarient.objects.filter(product=product)
     product_variant_types = ProductVariantTypes.objects.filter(product_variant__in=product_variants)
+    product_variations = ProductVariation.objects.filter(product=product)
+    product_variation_types = ProductVariationTypes.objects.filter(product_variation__in=product_variations)
+    product_variation_types_prices = ProductVariationTypesPrices.objects.filter(product=product)
 
     # fetching rate without gst
     price_wo_gst = product_variant_types.first().varient_price if product_variant_types.exists() else product.price
@@ -716,6 +719,9 @@ def product_new(request, title):
         "products": product,
         "product_variants": product_variants,
         "product_variant_types": product_variant_types,
+        "product_variations": product_variations,
+        "product_variation_types": product_variation_types,
+        "product_variation_types_prices": product_variation_types_prices,
         "product_images": product_images,
         "default_price": total_price,
         "price_wo_gst": price_wo_gst,

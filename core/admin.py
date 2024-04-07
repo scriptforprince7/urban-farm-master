@@ -30,6 +30,10 @@ class ProductVariationTypesAdmin(admin.StackedInline):
     model = ProductVariationTypes
     extra = 0 
 
+class ProductVariationTypesPricesAdmin(admin.StackedInline):
+    model = ProductVariationTypesPrices
+    extra = 0 
+
 class ProductVarientAdmin(admin.StackedInline):
     model = ProductVarient
     extra = 0
@@ -42,7 +46,7 @@ class ProductVariationAdmin(admin.StackedInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImagesAdmin, ProductVarientAdmin, ProductVariantImagesAdmin, ProductVariationAdmin, ProductVariationTypesAdmin]
+    inlines = [ProductImagesAdmin, ProductVarientAdmin, ProductVariantImagesAdmin, ProductVariationAdmin, ProductVariationTypesAdmin, ProductVariationTypesPricesAdmin]
     list_display = ['main_category','title', 'product_slug', 'packing_size', 'price', 'product_status']
     list_filter = ['main_category', 'category', 'featured', 'product_status'] 
     search_fields = ['title', 'description'] 
