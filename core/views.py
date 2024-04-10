@@ -688,22 +688,24 @@ def product_new(request, title):
     product_variant_types = ProductVariantTypes.objects.filter(product_variant__in=product_variants)
     product_variations = ProductVariation.objects.filter(product=product)
     product_variation_types = ProductVariationTypes.objects.filter(product_variation__in=product_variations)
-    product_variation_types_prices = ProductVariationTypesPrices.objects.filter(product=product)
 
-    # fetching rate without gst
+    variation_prices = []
+    for variation_type in product_variation_types:
+        prices = ProductVariationTypesPrices.objects.filter(product=product, product_variation_types=variation_type)
+        variation_prices.append((variation_type, prices))
+
+    # Check if variants and variations exist
+    has_variants = product_variants.exists()
+    has_variations = product_variations.exists()
+
+    # Fetching rate without GST
     price_wo_gst = product_variant_types.first().varient_price if product_variant_types.exists() else product.price
 
     # Fetching GST rate
-    if product_variant_types.exists():
-        gst_rate = product_variant_types.first().gst_rate
-    else:
-        gst_rate = product.gst_rate
+    gst_rate = product_variant_types.first().gst_rate if product_variant_types.exists() else product.gst_rate
 
     # Calculating default price including GST
-    if product_variant_types.exists():
-        base_price = product_variant_types.first().varient_price
-    else:
-        base_price = product.price
+    base_price = product_variant_types.first().varient_price if product_variant_types.exists() else product.price
 
     # Calculate GST amount
     gst_amount = base_price * Decimal(gst_rate.strip('%')) / 100
@@ -721,13 +723,18 @@ def product_new(request, title):
         "product_variant_types": product_variant_types,
         "product_variations": product_variations,
         "product_variation_types": product_variation_types,
-        "product_variation_types_prices": product_variation_types_prices,
+        "variation_prices": variation_prices,
         "product_images": product_images,
         "default_price": total_price,
         "price_wo_gst": price_wo_gst,
         "default_packaging_size": default_packaging_size,
         "gst_rate": gst_rate,
+        "has_variants": has_variants,
+        "has_variations": has_variations,
     }
 
     return render(request, "core/product.html", context)
+
+
+
 
