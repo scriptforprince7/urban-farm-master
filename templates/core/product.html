@@ -194,7 +194,7 @@
           </span>
         </div>
         <div class="product-single__price">
-          <span class="current-price">₹ <span id="product-price" class="current-price">{{ default_price }}</span></span>
+          <span class="current-price">₹ <span id="clicked-price" class="product-price">{{ default_price }}</span></span>
         </div>
         <p class="gst_rate">(Includes <span id="gst_rate">{{ gst_rate }}</span> GST)</p>
 
@@ -264,43 +264,16 @@
             </div>
             {% endfor %}
           </div>
-          <span id="clicked-price">Clicked price</span>
 
-      {% for variation_type, prices in variation_prices %}
+      {% comment %} {% for variation_type, prices in variation_prices %}
       <h3>{{ variation_type.variation_title }}</h3>
       <ul>
           {% for price in prices %}
               <li>{{ price.product_variant_type.variant_title }}: {{ price.varient_type_price }}</li>
           {% endfor %}
       </ul>
-  {% endfor %}
-  
-
-      {% comment %} {% if product_variations %}
-          <div class="product-variations">
-              <h3>Product Variations:</h3>
-              <ul>
-                  {% for variation_type in product_variation_types %}
-                      <li>{{ variation_type.variation_title }}:</li>
-                      <ul>
-                          {% for variation in product_variations %}
-                              {% if variation.product_variation == variation_type %}
-                                  <li>{{ variation.variation_title }}</li>
-                                  {% for variation_price in product_variation_types_prices %}
-                                      {% if variation_price.product_variation_types == variation %}
-                                          <li>Price: {{ variation_price.varient_type_price }}</li>
-                                          <li>GST Rate: {{ variation_price.gst_rate }}</li>
-                                      {% endif %}
-                                  {% endfor %}
-                              {% endif %}
-                          {% endfor %}
-                      </ul>
-                  {% endfor %}
-              </ul>
-          </div>
-      {% endif %} {% endcomment %}
-      
-      
+  {% endfor %} {% endcomment %}
+        
           <div class="product-single__addtocart">
             <div class="qty-control position-relative">
               <input
@@ -701,6 +674,7 @@
       var gstRate = priceObject.gstRate;
 
       // Calculate total price based on selected types
+      var basePrice = price;
       var totalPrice = price * (1 + (parseFloat(gstRate) / 100));
       
       // Display the related price
@@ -717,13 +691,21 @@
         selectedVariantType.checked = true;
       }
 
+      var basePrice = price;
       var totalPrice = price + (price * (gstRate / 100));
 
       document.getElementById('clicked-price').textContent = totalPrice.toFixed(2);
+      totalPrice = parseFloat(document.getElementById('clicked-price').textContent);
     } else {
       // Handle other cases where neither variants nor variations exist
-      document.getElementById('clicked-price').textContent = 'Nothing Exists.';
+      document.getElementById('clicked-price').textContent = '{{default_price}}';
+      totalPrice = parseFloat('{{ default_price }}');
+      var basePrice = {{price_wo_gst}};
     }
+
+    document.querySelector('.product-price-{{ products.pid }}').value = totalPrice.toFixed(2);
+
+    document.querySelector('.product-price-wo-gst-{{ products.pid }}').value = basePrice.toFixed(2);
 
     // Update swatch selection styling
     updateSwatchSelection();
