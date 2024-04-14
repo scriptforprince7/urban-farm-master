@@ -688,6 +688,8 @@ def product_new(request, title):
     product_variant_types = ProductVariantTypes.objects.filter(product_variant__in=product_variants)
     product_variations = ProductVariation.objects.filter(product=product)
     product_variation_types = ProductVariationTypes.objects.filter(product_variation__in=product_variations)
+    related_products = Product.objects.filter(main_category=product.main_category).exclude(pid=product.pid)[:10]
+    related_maincategory = product.main_category
 
     variation_prices = []
     for variation_type in product_variation_types:
@@ -731,6 +733,8 @@ def product_new(request, title):
         "gst_rate": gst_rate,
         "has_variants": has_variants,
         "has_variations": has_variations,
+        "related_products": related_products,
+        "related_maincategory":  related_maincategory,
     }
 
     return render(request, "core/product.html", context)
