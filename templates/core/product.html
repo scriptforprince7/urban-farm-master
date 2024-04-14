@@ -231,50 +231,38 @@
               background-color: yellow;
             }
           </style>
-          
           <div class="product-section">
             {% for variant in product_variants %}
-<div class="product-single__swatches">
-  <div class="product-swatch text-swatches">
-    <label>{{ variant.title }}</label>
-    <div class="swatch-list">
-      {% for variant_type in product_variant_types %}
-      {% if variant_type.product_variant == variant %}
-      <input type="radio" name="variant_size" id="swatch-{{ variant_type.id }}" {% if forloop.first %}checked{% endif %} data-price="{{ variant_type.varient_price }}" data-gst="{{ variant_type.gst_rate }}" data-variant="variant" />
-      <label class="swatch js-swatch {% if forloop.first %}selected-swatch{% endif %}" for="swatch-{{ variant_type.id }}" aria-label="{{ variant_type.variant_title }}" title="{{ variant_type.variant_title }}">{{ variant_type.variant_title }}</label>
-      {% endif %}
-      {% endfor %}
-    </div>
-  </div>
-</div>
-{% endfor %}
-
-{% comment %} product variation section {% endcomment %}
-{% for variation in product_variations %}
-<div class="product-single__swatches">
-  <div class="product-swatch text-swatches">
-    <label>{{ variation.variation_title }}</label>
-    <div class="swatch-list">
-      {% for variant_type in product_variation_types %}
-      {% if variant_type.product_variation == variation %}
-      <input type="radio" name="variation_size" id="swatch-{{ variant_type.id }}" {% if forloop.first %}checked{% endif %}
-      {% for price in variant_type.productvariationtypesprices_set.all %}
-      data-variant-type-id="{{price.product_variant_type}}"
-      data-price-variations="{{ price.varient_type_price }}"
-      {% endfor %}
-      {% for gst in variant_type.productvariationtypesprices_set.all %}
-      data-variant-type-id="{{gst.product_variant_type}}"
-       data-gst-variations="{{ gst.gst_rate }}"
-       {% endfor %}
-       data-variant="variation" />
-      <label class="swatch js-swatch {% if forloop.first %}selected-swatch{% endif %}" for="swatch-{{ variant_type.id }}" aria-label="{{ variant_type.variation_title }}" title="{{ variant_type.variation_title }}">{{ variant_type.variation_title }}</label>
-      {% endif %}
-      {% endfor %}
-    </div>
-  </div>
-</div>
-{% endfor %}
-{% comment %} product variation section {% endcomment %}
+            <div class="product-single__swatches">
+              <div class="product-swatch text-swatches">
+                <label>{{ variant.title }}</label>
+                <div class="swatch-list">
+                  {% for variant_type in product_variant_types %}
+                  {% if variant_type.product_variant == variant %}
+                  <input type="radio" name="variant_size" id="swatch-{{ variant_type.id }}" {% if forloop.first %}checked{% endif %} data-price="{{ variant_type.varient_price }}" data-gst="{{ variant_type.gst_rate }}" data-variant-type-id="{{ variant_type.id }}" />
+                  <label class="swatch js-swatch {% if forloop.first %}selected-swatch{% endif %}" for="swatch-{{ variant_type.id }}" aria-label="{{ variant_type.variant_title }}" title="{{ variant_type.variant_title }}">{{ variant_type.variant_title }}</label>
+                  {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          
+            {% for variation in product_variations %}
+            <div class="product-single__swatches">
+              <div class="product-swatch text-swatches">
+                <label>{{ variation.variation_title }}</label>
+                <div class="swatch-list">
+                  {% for variant_type in product_variation_types %}
+                  {% if variant_type.product_variation == variation %}
+                  <input type="radio" name="variation_size" id="swatch-{{ variant_type.id }}" {% if forloop.first %}checked{% endif %} data-variation-type-id="{{ variant_type.id }}" />
+                  <label class="swatch js-swatch {% if forloop.first %}selected-swatch{% endif %}" for="swatch-{{ variant_type.id }}" aria-label="{{ variant_type.variation_title }}" title="{{ variant_type.variation_title }}">{{ variant_type.variation_title }}</label>
+                  {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
           </div>
           <span id="clicked-price">Clicked price</span>
 
@@ -641,89 +629,110 @@
 </main>
 <div class="mb-5 pb-xl-5"></div>
 
+
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var radioButtons = document.querySelectorAll('input[name="variant_size"], input[name="variation_size"]');
     radioButtons.forEach(function(radioButton) {
       radioButton.addEventListener('click', updatePrice);
     });
+
+    updatePrice();
   });
 
   function updatePrice() {
-    // Check if either variants or variations exist
     var hasVariants = {{ has_variants|lower }};
     var hasVariations = {{ has_variations|lower }};
 
-    if (!hasVariants && !hasVariations) {
-      // Use logic from the first script when no variants or variations exist
+    if (hasVariants && hasVariations) {
+      // Proceed with logic if both variants and variations exist
+      var selectedVariantType = document.querySelector('input[name="variant_size"]:checked');
+      var selectedVariationType = document.querySelector('input[name="variation_size"]:checked');
+      // Get the selected variant type and variation type IDs
+      var selectedVariantTypeId = selectedVariantType.getAttribute('data-variant-type-id');
+      var selectedVariationTypeId = selectedVariationType.getAttribute('data-variation-type-id');
+
+      // Select the first product variant type and first product variation type by default
+      if (!selectedVariantType) {
+        selectedVariantType = document.querySelector('input[name="variant_size"]');
+        selectedVariantType.checked = true;
+      }
+      if (!selectedVariationType) {
+        selectedVariationType = document.querySelector('input[name="variation_size"]');
+        selectedVariationType.checked = true;
+      }
+
+      // Store all the prices and product variant types that are in selected product variation type
+      var variationPrices = {};
+
+      {% for variation_type, prices in variation_prices %}
+      variationPrices["{{ variation_type.id }}"] = {};
+      {% for price in prices %}
+      variationPrices["{{ variation_type.id }}"]["{{ price.product_variant_type.id }}"] = {
+        price: {{ price.varient_type_price }},
+        gstRate: "{{ price.gst_rate }}"
+      };
+      {% endfor %}
+      {% endfor %}
+
+      console.log(variationPrices);
+      
+      // Retrieve the price and GST rate from the variationPrices object
+      var priceObject = variationPrices[selectedVariationTypeId][selectedVariantTypeId];
+      var price = priceObject.price;
+      var gstRate = priceObject.gstRate;
+
+      // Calculate total price based on selected types
+      var totalPrice = price * (1 + (parseFloat(gstRate) / 100));
+      
+      // Display the related price
+      document.getElementById('clicked-price').textContent = totalPrice.toFixed(2);
+    } else if (hasVariants) {
+      // Proceed with logic if only variants exist
       var price = parseFloat(this.getAttribute('data-price'));
       var gstRate = parseFloat(this.getAttribute('data-gst'));
+
+      // Select the first product variant type as default
+      var selectedVariantType = document.querySelector('input[name="variant_size"]:checked');
+      if (!selectedVariantType) {
+        selectedVariantType = document.querySelector('input[name="variant_size"]');
+        selectedVariantType.checked = true;
+      }
 
       var totalPrice = price + (price * (gstRate / 100));
 
       document.getElementById('clicked-price').textContent = totalPrice.toFixed(2);
-      return;
+    } else {
+      // Handle other cases where neither variants nor variations exist
+      document.getElementById('clicked-price').textContent = 'Nothing Exists.';
     }
 
-// Logic from the second script when either variants or variations exist
-var selectedVariant = document.querySelector('input[name="variant_size"][data-variant="variant"]:checked');
-var selectedVariation = document.querySelector('input[name="variation_size"][data-variant="variation"]:checked');
+    // Update swatch selection styling
+    updateSwatchSelection();
+  }
 
-if (selectedVariant && selectedVariation) {
-  var variantPrice = parseFloat(selectedVariant.getAttribute('data-price'));
-  var variantGst = parseFloat(selectedVariant.getAttribute('data-gst'));
-  var variationPrice = parseFloat(selectedVariation.getAttribute('data-price-variations'));
-  var variationGst = parseFloat(selectedVariation.getAttribute('data-gst-variations'));
+  function updateSwatchSelection() {
+    var selectedVariantType = document.querySelector('input[name="variant_size"]:checked');
+    var selectedVariationType = document.querySelector('input[name="variation_size"]:checked');
+    var selectedSwatches = document.querySelectorAll('.js-swatch.selected-swatch');
+    
+    // Remove selected class from all swatches
+    selectedSwatches.forEach(function(swatch) {
+      swatch.classList.remove('selected-swatch');
+    });
 
-  var totalPrice = variantPrice + (variantPrice * (variantGst / 100)) + variationPrice + (variationPrice * (variationGst / 100));
+    // Add selected class to the next sibling of selected variant type
+    if (selectedVariantType) {
+      selectedVariantType.nextElementSibling.classList.add('selected-swatch');
+    }
 
-  document.getElementById('clicked-price').textContent = totalPrice.toFixed(2);
-
-  // Remove the class from all swatches
-  document.querySelectorAll('.swatch.js-swatch').forEach(function(swatch) {
-    swatch.classList.remove('selected-swatch');
-  });
-
-  // Add the class to the selected swatch
-  selectedVariant.nextElementSibling.classList.add('selected-swatch');
-  selectedVariation.nextElementSibling.classList.add('selected-swatch');
-} else if (selectedVariation) {
-  var variationPrice = parseFloat(selectedVariation.getAttribute('data-price-variations'));
-  var variationGst = parseFloat(selectedVariation.getAttribute('data-gst-variations'));
-
-  var totalPrice = variationPrice + (variationPrice * (variationGst / 100));
-
-  document.getElementById('clicked-price').textContent = totalPrice.toFixed(2);
-
-  // Remove the class from all swatches
-  document.querySelectorAll('.swatch.js-swatch').forEach(function(swatch) {
-    swatch.classList.remove('selected-swatch');
-  });
-
-  // Add the class to the selected swatch
-  selectedVariation.nextElementSibling.classList.add('selected-swatch');
-} else if (selectedVariant) {
-  var variantPrice = parseFloat(selectedVariant.getAttribute('data-price'));
-  var variantGst = parseFloat(selectedVariant.getAttribute('data-gst'));
-
-  var totalPrice = variantPrice + (variantPrice * (variantGst / 100));
-
-  document.getElementById('clicked-price').textContent = totalPrice.toFixed(2);
-
-  // Remove the class from all swatches
-  document.querySelectorAll('.swatch.js-swatch').forEach(function(swatch) {
-    swatch.classList.remove('selected-swatch');
-  });
-
-  // Add the class to the selected swatch
-  selectedVariant.nextElementSibling.classList.add('selected-swatch');
-} else {
-  document.getElementById('clicked-price').textContent = 'Please select both a variant and a variation.';
-}
-
+    // Add selected class to the next sibling of selected variation type
+    if (selectedVariationType) {
+      selectedVariationType.nextElementSibling.classList.add('selected-swatch');
+    }
   }
 </script>
-
 
 
 {% endblock main %}
