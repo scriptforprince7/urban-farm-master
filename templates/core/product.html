@@ -641,6 +641,23 @@
     updatePrice();
   });
 
+   // Calculate and display default price for the default selected variant type
+   function calculateDefaultPrice() {
+    var hasVariants = {{ has_variants|lower }};
+
+    if (hasVariants) {
+      var selectedVariantType = document.querySelector('input[name="variant_size"]:checked');
+      var price = parseFloat(selectedVariantType.getAttribute('data-price'));
+      var gstRate = parseFloat(selectedVariantType.getAttribute('data-gst'));
+      
+      var totalPrice = price + (price * (gstRate / 100));
+      document.getElementById('clicked-price').textContent = totalPrice.toFixed(2);
+    }
+  }
+
+  // Call the function to calculate and display default price
+  calculateDefaultPrice();
+
   function updatePrice() {
     var hasVariants = {{ has_variants|lower }};
     var hasVariations = {{ has_variations|lower }};
