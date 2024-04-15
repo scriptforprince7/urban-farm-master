@@ -337,22 +337,8 @@ class Blogs(models.Model):
     blog_title = models.CharField(max_length=100)
     blog_image = models.ImageField(upload_to="blogs-images", default="blogs.jpg")
     blog_slug = models.SlugField(unique=True, max_length=150, blank=True, null=True) 
-    blog_description = HTMLField()
-    blog_tags = models.CharField(max_length=100)   
-    canonical_link = models.CharField(max_length=200)
-    meta_description = models.CharField(max_length=200)
-    meta_title = models.CharField(max_length=200)
-    meta_tag = models.CharField(max_length=200)
-    meta_robots = models.CharField(max_length=100)
-    og_url = models.CharField(max_length=100)
-    og_title = models.CharField(max_length=100)
-    og_description = models.CharField(max_length=100)
-    og_image = models.CharField(max_length=100)
-    twitter_title = models.CharField(max_length=100)
-    twitter_description = models.CharField(max_length=100)
-    twitter_description = models.CharField(max_length=100)
+    blog_description = HTMLField()   
     date = models.DateField(auto_now_add=True)
-
 
     class Meta:
         verbose_name_plural = "Blogs"

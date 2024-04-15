@@ -25,6 +25,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags    
 from num2words import num2words
+from bs4 import BeautifulSoup
 
 def index(request):
     main_categories = Main_category.objects.filter(active_status='published')
@@ -344,7 +345,30 @@ def write_to_ceo(request):
     return render(request, "core/write-to-ceo.html")
 
 def blogs(request):
-    return render(request, "core/blog.html")
+    blogs = Blogs.objects.all()
+    for blog in blogs:
+        # Parsing HTML and extracting text
+        soup = BeautifulSoup(blog.blog_description, "html.parser")
+        description_text = soup.get_text(separator='\n')
+        # Splitting the text into lines and selecting the first two lines
+        description_lines = description_text.split('\n')
+        blog.short_description = '\n'.join(description_lines[:2])
+
+    context = {
+        "blogs": blogs,
+    }
+
+    return render(request, "core/blog.html", context)
+
+def blog_details(request, blog_slug):
+    blog_detail = Blogs.objects.get(blog_slug=blog_slug)
+
+    context = {
+        "blog_detail": blog_detail,
+    }
+
+    return render(request, "core/blog-details.html", context)
+
 
 def grow_method(request):
     return render(request, "core/grow-method.html")
