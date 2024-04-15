@@ -422,7 +422,7 @@
                     <div class="pc__info position-relative bg-body">
                         <div class="position-relative">
                             <p class="pc__category">Dresses</p>
-                            <h6 class="pc__title"><a href=" ">{{new_arrivals.title}}</a></h6>
+                            <h6 class="pc__title"><a href="{% url 'core:product_new' new_arrivals.title %}">{{new_arrivals.title}}</a></h6>
                             <div class="product-card__price d-flex">
                                 <span class="money price">₹ {{new_arrivals.price}}</span>
                             </div>

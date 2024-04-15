@@ -243,18 +243,18 @@
 
     document.getElementById('rzp-button1').onclick = function(e){
         if (!validateForm()) {
-            e.preventDefault(); // Prevent the default form submission if validation fails
+            e.preventDefault();
             return;
         }
-        rzp1.open(); // Open the Razorpay payment modal
+        rzp1.open();
     }
 
     function fetchAddressDetails(zipcode) {
         $.getJSON('https://nominatim.openstreetmap.org/search?postalcode=' + zipcode + '&format=json', function(data) {
             if (data.length > 0) {
                 var address = data[0];
-                var townCity = address['display_name']; // Extract the town/city from the fetched address
-                $('#checkout_city').val(townCity); // Set the value of town/city input field
+                var townCity = address['display_name']; 
+                $('#checkout_city').val(townCity);
             }
         });
     }
@@ -262,7 +262,7 @@
     $('#checkout_zipcode').on('input', function() {
         var zipcode = $(this).val().trim();
         if (zipcode !== '') {
-            fetchAddressDetails(zipcode); // Call the function to fetch address details
+            fetchAddressDetails(zipcode);
         }
     });
 
@@ -282,8 +282,6 @@
     }
 
     toggleGstFields();
-
-    // Add event listener to the "HAVING GST?" checkbox
     document.getElementById("create_account").addEventListener("change", toggleGstFields);
 </script>
 
