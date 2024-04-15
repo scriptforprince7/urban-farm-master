@@ -346,6 +346,9 @@ def write_to_ceo(request):
 def blogs(request):
     return render(request, "core/blog.html")
 
+def grow_method(request):
+    return render(request, "core/grow-method.html")
+
 @login_required
 def payment_invoice(request):
     razorpay_payment_id = request.GET.get('razorpay_payment_id')
