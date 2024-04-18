@@ -366,14 +366,46 @@
                                     <div class="pc__info position-relative">
                                         <h6 class="pc__title"><a href=" ">{{best_picks.title}}</a></h6>
                                         <div class="product-card__price d-flex">
-                                            <span class="money price text-secondary">₹ {{best_picks.price}}</span>
+                                            <span class="money price text-secondary">₹ {{best_picks.gst_inclusive_price}}</span>
                                         </div>
 
                                         <div
                                             class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
+
+                                            <input type="hidden" value="{{best_picks.pid}}" class="product-id">
+
+                                            <input type="hidden" value="{{best_picks.pid}}" id="product-quantity-{{products.pid}}" class="product-id-{{best_picks.pid}}">
+
+                                            <input type="hidden" value="1" class="product-quantity-{{best_picks.pid}}">
+
+                                            <input type="hidden" value="{{best_picks.title}}" class="product-title-{{best_picks.pid}}">
+
+                                            <input type="hidden" value="{{best_picks.gst_inclusive_price}}" class="product-price-{{best_picks.pid}}">
+
+                                           
+                                            {% with price_wo_gst=best_picks.variant_price|default:best_picks.price %}
+                                            <input type="hidden" value="{{ price_wo_gst }}" class="product-price-wo-gst-{{ best_picks.pid }}">
+                                            {% endwith %}
+                                           
+
+                                            {% if best_picks.productvarient_set.exists %}
+                                            {% with first_variant=best_picks.productvarient_set.first %}
+                                            <input type="hidden" value="{{ first_variant.productvarianttypes_set.first.gst_rate }}" class="gst_rate-{{ best_picks.pid }}">
+                                            {% endwith %}
+                                            {% else %}
+                                            <input type="hidden" value="{{ best_picks.gst_rate }}" class="gst_rate-{{ best_picks.pid }}">
+                                            {% endif %}
+
+                                            <input type="hidden" value="{{best_picks.sku}}" class="product-sku-{{best_picks.pid}}">
+
+                                            <input type="hidden" value="{{best_picks.image.url}}" class="product-image-{{best_picks.pid}}">
+
                                             <button
-                                                class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside custom"
+                                                class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside custom add-to-cart-btn"
+                                                id="add-to-cart-btn"
+                                                data-index="{{best_picks.pid}}"
                                                 data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+
                                            <a href="{% url 'core:product_new' best_picks.title %}"><button
                                             class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
                                             title="Quick view">
@@ -421,10 +453,15 @@
 
                     <div class="pc__info position-relative bg-body">
                         <div class="position-relative">
-                            <p class="pc__category">Dresses</p>
+                            <p class="pc__category">
+                              {% for category in new_arrival_main_categories %}
+                              {{ category.main_title }}
+                              {% if not forloop.last %}, {% endif %}
+                          {% endfor %}
+                            </p>
                             <h6 class="pc__title"><a href="{% url 'core:product_new' new_arrivals.title %}">{{new_arrivals.title}}</a></h6>
                             <div class="product-card__price d-flex">
-                                <span class="money price">₹ {{new_arrivals.price}}</span>
+                                <span class="money price">₹{{new_arrivals.gst_inclusive_price}}</span>
                             </div>
 
                             <div class="d-flex align-items-center hover__content position-relative mt-3 mt-sm-0"><button

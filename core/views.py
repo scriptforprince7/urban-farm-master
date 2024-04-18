@@ -32,14 +32,64 @@ def index(request):
     new_arrival = Product.objects.filter(new_arrival=True)
     deal_of_week = Product.objects.filter(deal_of_week=True)
     summer_sale = Product.objects.filter(summer_sale=True)
-    product_variants = ProductVarient.objects.filter(product__in=deal_of_week)
-    product_variant_types = ProductVariantTypes.objects.filter(product_variant__product__in=deal_of_week)
     product_images = ProductImages.objects.filter(product__in=deal_of_week)
+
+    new_arrival_main_categories = Main_category.objects.filter(product__in=new_arrival).distinct()
+
+    # Fetching product variants and variant types for products in summer sale
+    product_variants = ProductVarient.objects.filter(product__in=summer_sale)
+    product_variant_types = ProductVariantTypes.objects.filter(product_variant__product__in=summer_sale)
 
     halfway_index = len(main_categories) // 2
 
     first_half_categories = main_categories[:halfway_index]
     second_half_categories = main_categories[halfway_index:]
+
+        # Iterate over products in summer sale to determine prices
+    for product in summer_sale:
+        # Check if the product has variants
+        product_has_variants = product.productvarient_set.exists()
+
+        if product_has_variants:
+            # Get the first variant
+            first_variant = product.productvarient_set.first()
+            # Calculate default price without GST
+            price_wo_gst = first_variant.productvarianttypes_set.first().varient_price
+            # Fetching price of the first variant type
+            base_price = first_variant.productvarianttypes_set.first().varient_price
+            # Fetching GST rate
+            gst_rate = first_variant.productvarianttypes_set.first().gst_rate
+            # Calculate GST amount
+            gst_amount = base_price * Decimal(gst_rate.strip('%')) / 100
+            # Calculate total price including GST and round off to two decimal places
+            product.gst_inclusive_price = round(base_price + gst_amount, 2)
+            # Include original variant price in the context
+            product.variant_price = price_wo_gst
+        else:
+            # Use the existing price for the product if it doesn't have variants
+            product.gst_inclusive_price = product.price * (1 + Decimal(product.gst_rate.strip('%')) / 100)
+            # If the product doesn't have variants, set variant_price to None
+            product.variant_price = None
+
+     # Iterate over products in new arrival to determine prices
+    for product in new_arrival:
+        # Check if the product has variants
+        product_has_variants = product.productvarient_set.exists()
+
+        if product_has_variants:
+            # Get the first variant
+            first_variant = product.productvarient_set.first()
+            # Fetching price of the first variant type
+            base_price = first_variant.productvarianttypes_set.first().varient_price
+            # Fetching GST rate
+            gst_rate = first_variant.productvarianttypes_set.first().gst_rate
+            # Calculate GST amount
+            gst_amount = base_price * Decimal(gst_rate.strip('%')) / 100
+            # Calculate total price including GST and round off to two decimal places
+            product.gst_inclusive_price = round(base_price + gst_amount, 2)
+        else:
+            # Use the existing price for the product if it doesn't have variants
+            product.gst_inclusive_price = product.price * (1 + Decimal(product.gst_rate.strip('%')) / 100)
 
     context = {
         "main_cat": main_categories,
@@ -48,11 +98,15 @@ def index(request):
         "new_arrival": new_arrival,
         "deal_of_week": deal_of_week,
         "summer_sale": summer_sale,
+        "product_images": product_images,
+        "product": product,
+        "new_arrival_main_categories":new_arrival_main_categories,
         "product_variants": product_variants,
         "product_variant_types": product_variant_types,
-        "product_images": product_images,
     }
+
     return render(request, 'core/index.html', context)
+
 
 def category(request, main_title):
     main_categories = Main_category.objects.get(main_title=main_title)
@@ -106,6 +160,7 @@ def category(request, main_title):
             gst_rate = product.gst_rate
             # If the product doesn't have variants, set variant_price to None
             product.variant_price = None
+            
 
     context = {
         "main_categories": main_categories,

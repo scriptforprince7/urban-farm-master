@@ -356,11 +356,15 @@
                 ></span>
               </div>
       <input type="hidden" value="1" id="product-quantity" class="product-quantity-{{product.pid}}">
+
       <input type="hidden" value="{{product.pid}}" class="product-id-{{product.pid}}">
+
       <input type="hidden" value="{{product.title}}" class="product-title-{{product.pid}}">
+
       {% with price_wo_gst=product.variant_price|default:product.price %}
       <input type="hidden" value="{{ price_wo_gst }}" class="product-price-wo-gst-{{ product.pid }}">
       {% endwith %}
+
       {% if product.productvarient_set.exists %}
                 {% with first_variant=product.productvarient_set.first %}
                 <input type="hidden" value="{{ first_variant.productvarianttypes_set.first.gst_rate }}" class="gst_rate-{{ product.pid }}">
@@ -368,6 +372,7 @@
             {% else %}
             <input type="hidden" value="{{ product.gst_rate }}" class="gst_rate-{{ product.pid }}">
             {% endif %}
+            
       <input type="hidden" value="{{ product.gst_inclusive_price }}" class="product-price-{{ product.pid }}">
 
       <input type="hidden" value="{{product.sku}}" class="product-sku-{{product.pid}}">
