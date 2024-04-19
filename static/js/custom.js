@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
     $(".add-to-cart-btn").on("click", function(){
     
@@ -43,6 +42,7 @@ $(document).ready(function(){
             success: function(response){
                 this_val.html("✓");
                 console.log("Added Product to cart!");
+                updateCartItemsList(response.data);
                 $(".cart-items-count").text(response.totalcartitems);
     
                 // Display SweetAlert
@@ -58,6 +58,40 @@ $(document).ready(function(){
         })
     })
     })
+
+// Update cart items list function
+function updateCartItemsList(cartData) {
+    var cartItemsList = $('.cart-drawer-items-list');
+    cartItemsList.empty(); // Clear existing items
+
+    // Iterate over cart items and append them to the list
+    $.each(cartData, function(productId, item) {
+        var itemHtml = `
+            <div class="cart-drawer-item d-flex position-relative">
+                <div class="position-relative">
+                    <img loading="lazy" class="cart-drawer-item__img" src="${item.image}" alt="${item.title}" />
+                </div>
+                <div class="cart-drawer-item__info flex-grow-1">
+                    <a href="{% url 'core:product_new' item.title %}">
+                        <h6 class="cart-drawer-item__title fw-normal">${item.title}</h6>
+                    </a>  
+                    <p class="cart-drawer-item__option text-secondary">Sku ID: ${item.sku}</p>
+                    <div class="d-flex align-items-center justify-content-between mt-1">
+                        <div class="qty-control position-relative">
+                            <input type="number" name="quantity" value="${item.qty}" min="1"
+                                class="qty-control__number border-0 text-center" />
+                            <div class="qty-control__reduce text-start">-</div>
+                            <div class="qty-control__increase text-end">+</div>
+                        </div>
+                        <span class="cart-drawer-item__price money price">₹ ${item.price}</span>
+                    </div>
+                </div>
+                <button class="btn-close-xs position-absolute top-0 end-0 js-cart-item-remove"></button>
+            </div>
+        `;
+        cartItemsList.append(itemHtml);
+    });
+}
     
     
     $(document).ready(function(){
