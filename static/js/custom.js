@@ -40,24 +40,36 @@ $(document).ready(function(){
                 console.log("Adding Product to the cart...");
             },
             success: function(response){
-                this_val.html("✓");
-                console.log("Added Product to cart!");
-                updateCartItemsList(response.data);
-                $(".cart-items-count").text(response.totalcartitems);
-    
-                // Display SweetAlert
-                Swal.fire({
-                  position: 'top-end',
-                  icon: 'success',
-                  title: 'Product has been added to your cart',
-                  showConfirmButton: false,
-                  timer: 1500
-                });
+                if(response.already_in_cart) {
+                    // Show alert that product is already in the cart
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'info',
+                        title: 'Product is already in your cart',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } else {
+                    // Show success alert and update cart
+                    this_val.html("✓");
+                    console.log("Added Product to cart!");
+                    updateCartItemsList(response.data);
+                    $(".cart-items-count").text(response.totalcartitems);
+                    
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Product has been added to your cart',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
             }
     
         })
     })
-    })
+});
+
 
 // Update cart items list function
 function updateCartItemsList(cartData) {
@@ -80,14 +92,20 @@ function updateCartItemsList(cartData) {
                         <div class="qty-control position-relative">
                             <input type="number" name="quantity" value="${item.qty}" min="1"
                                 class="qty-control__number border-0 text-center" />
-                            <div class="qty-control__reduce text-start">-</div>
-                            <div class="qty-control__increase text-end">+</div>
+                            
                         </div>
                         <span class="cart-drawer-item__price money price">₹ ${item.price}</span>
                     </div>
                 </div>
                 <button class="btn-close-xs position-absolute top-0 end-0 js-cart-item-remove"></button>
             </div>
+
+            <div class="cart-drawer-actions position-absolute start-0 bottom-0 w-100">
+          <hr class="cart-drawer-divider" />
+          <div class="d-flex justify-content-between">
+              <h6 class="fs-base fw-medium">SUBTOTAL: </h6>
+              <span class="cart-subtotal fw-medium">₹ {{cart_total_amount|floatformat:"2"}}</span>
+          </div>
         `;
         cartItemsList.append(itemHtml);
     });
