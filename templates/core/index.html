@@ -464,15 +464,39 @@
                                 <span class="money price">₹{{new_arrivals.gst_inclusive_price}}</span>
                             </div>
 
-                            <div class="d-flex align-items-center hover__content position-relative mt-3 mt-sm-0"><button
-                                class="btn-link btn-link_lg me-auto text-uppercase fw-medium js-quick-view custom"
-                                 title="Quick view">
-                               <a><span class="d-none d-xxl-block">Quick View</span></a> 
-                                <span class="d-block d-xxl-none"><svg width="18" height="18" viewBox="0 0 18 18"
-                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <use href="#icon_view" />
-                                    </svg></span>
-                            </button></a>  
+                            <div class="d-flex align-items-center hover__content position-relative mt-3 mt-sm-0">
+                              <input type="hidden" value="{{new_arrivals.pid}}" class="product-id">
+
+                              <input type="hidden" value="{{new_arrivals.pid}}" id="product-quantity-{{products.pid}}" class="product-id-{{new_arrivals.pid}}">
+
+                              <input type="hidden" value="1" class="product-quantity-{{new_arrivals.pid}}">
+
+                              <input type="hidden" value="{{new_arrivals.title}}" class="product-title-{{new_arrivals.pid}}">
+
+                              <input type="hidden" value="{{new_arrivals.gst_inclusive_price}}" class="product-price-{{new_arrivals.pid}}">
+
+                             
+                              {% with price_wo_gst=new_arrivals.variant_price|default:new_arrivals.price %}
+                              <input type="hidden" value="{{ price_wo_gst }}" class="product-price-wo-gst-{{ new_arrivals.pid }}">
+                              {% endwith %}
+                             
+
+                              {% if new_arrivals.productvarient_set.exists %}
+                              {% with first_variant=new_arrivals.productvarient_set.first %}
+                              <input type="hidden" value="{{ first_variant.productvarianttypes_set.first.gst_rate }}" class="gst_rate-{{ new_arrivals.pid }}">
+                              {% endwith %}
+                              {% else %}
+                              <input type="hidden" value="{{ new_arrivals.gst_rate }}" class="gst_rate-{{ new_arrivals.pid }}">
+                              {% endif %}
+
+                              <input type="hidden" value="{{new_arrivals.sku}}" class="product-sku-{{new_arrivals.pid}}">
+
+                              <input type="hidden" value="{{new_arrivals.image.url}}" class="product-image-{{new_arrivals.pid}}">
+                              <button
+                              class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside custom add-to-cart-btn"
+                              id="add-to-cart-btn"
+                              data-index="{{new_arrivals.pid}}"
+                              data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
                             </div>
                         </div>
                     </div>

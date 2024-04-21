@@ -79,6 +79,8 @@ def index(request):
         if product_has_variants:
             # Get the first variant
             first_variant = product.productvarient_set.first()
+            # Calculate default price without GST
+            price_wo_gst = first_variant.productvarianttypes_set.first().varient_price
             # Fetching price of the first variant type
             base_price = first_variant.productvarianttypes_set.first().varient_price
             # Fetching GST rate
@@ -87,9 +89,11 @@ def index(request):
             gst_amount = base_price * Decimal(gst_rate.strip('%')) / 100
             # Calculate total price including GST and round off to two decimal places
             product.gst_inclusive_price = round(base_price + gst_amount, 2)
+            product.variant_price = price_wo_gst
         else:
             # Use the existing price for the product if it doesn't have variants
             product.gst_inclusive_price = product.price * (1 + Decimal(product.gst_rate.strip('%')) / 100)
+            product.variant_price = None
 
     context = {
         "main_cat": main_categories,
