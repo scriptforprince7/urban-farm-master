@@ -106,6 +106,7 @@ function updateCartItemsList(cartData) {
               <h6 class="fs-base fw-medium">SUBTOTAL: </h6>
               <span class="cart-subtotal fw-medium">₹ {{cart_total_amount|floatformat:"2"}}</span>
           </div>
+          <hr class="cart-drawer-divider" />
         `;
         cartItemsList.append(itemHtml);
     });

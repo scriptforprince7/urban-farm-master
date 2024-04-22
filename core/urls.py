@@ -23,6 +23,7 @@ urlpatterns = [
     path("grow-method/", grow_method, name="grow_method"),
     path("blog/<blog_slug>/", blog_details, name="blog_details"),
     path("privacy-policy/", privacypolicy, name="privacypolicy"),
+    path("cancellationandrefund/", cancellationandrefund, name="cancellationandrefund"),
     path("cart/", cart_view, name="cart_view"),
     path("payment-failed/", payment_failed_view, name="payment_failed_view"),
     path("dashboard/", dashboard, name="dashboard"),

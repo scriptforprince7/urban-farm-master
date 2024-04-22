@@ -730,6 +730,9 @@ def faq(request):
 def shipping_policy(request):
     return render(request, "core/shipping-policy.html")
 
+def cancellationandrefund(request):
+    return render(request, "core/cancellationandrefund.html")
+
 @login_required
 def orders(request):
     orders = CartOrder.objects.filter(user=request.user).order_by("-id")
