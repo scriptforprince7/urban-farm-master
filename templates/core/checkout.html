@@ -188,10 +188,9 @@
         "currency": "INR",
         "name": "Urban Farm",
         "description": "Test Transaction - Smart for Sustainability",
-        "image": "http://127.0.0.1:8000/static/images/logo_org.png",
+        "image": "{% static 'images/logo_org.png' %}",
         "order_id": "{{payment.id}}",
         "handler": function (response){
-
             var formData = {
                 'first_name': document.getElementById("checkout_first_name").value.trim(),
                 'last_name': document.getElementById("checkout_last_name").value.trim(),
@@ -206,21 +205,37 @@
             };
 
             var queryParams = Object.keys(formData).map(key => key + '=' + encodeURIComponent(formData[key])).join('&');
-            window.location.href = `http://127.0.0.1:8000/payment-invoice/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}&${queryParams}`;
+
+            // Trigger Swal alert before redirection
+            Swal.fire({
+                title: "Payment Successful!",
+                html: "Redirecting to invoice page...",
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                willClose: () => {
+                    // Redirect to invoice page after alert closes
+                    window.location.href = `http://127.0.0.1:8000/payment-invoice/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}&${queryParams}`;
+                }
+            });
         },
         "theme": {
             "color": "#004818"
         }
     };
+
     var rzp1 = new Razorpay(options);
+
     rzp1.on('payment.failed', function (response){
-            alert(response.error.code);
-            alert(response.error.description);
-            alert(response.error.source);
-            alert(response.error.step);
-            alert(response.error.reason);
-            alert(response.error.metadata.order_id);
-            alert(response.error.metadata.payment_id);
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
     });
 
     function validateForm() {
@@ -248,7 +263,6 @@
         return true;
     }
     
-
     document.getElementById('rzp-button1').onclick = function(e){
         if (!validateForm()) {
             e.preventDefault();
@@ -292,6 +306,7 @@
     toggleGstFields();
     document.getElementById("create_account").addEventListener("change", toggleGstFields);
 </script>
+
 
 
 <div class="mb-5 pb-xl-5"></div>
