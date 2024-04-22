@@ -228,18 +228,26 @@
         var lastName = document.getElementById("checkout_last_name").value.trim();
         var streetAddress = document.getElementById("checkout_street_address").value.trim();
         var shippingAddress = document.getElementById("checkout_shipping_address").value.trim();
+        var gst_number = document.getElementById("checkout_gst_number").value.trim();
         var city = document.getElementById("checkout_city").value.trim();
         var zipcode = document.getElementById("checkout_zipcode").value.trim();
         var phone = document.getElementById("checkout_phone").value.trim();
         var email = document.getElementById("checkout_email").value.trim();
-
+    
         if (firstName === '' || lastName === '' || streetAddress === '' || shippingAddress === '' || city === '' || zipcode === '' || phone === '' || email === '') {
             alert('Please fill in all details.');
             return false;
+        } else if (phone.length !== 10 || isNaN(phone)) {
+            alert('Please enter a valid 10-digit phone number.');
+            return false;
+        } else if (gst_number !== '' && gst_number.length !== 15) {
+            alert('Enter valid GST Number');
+            return false;
         }
-
+    
         return true;
     }
+    
 
     document.getElementById('rzp-button1').onclick = function(e){
         if (!validateForm()) {
