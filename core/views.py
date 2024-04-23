@@ -119,6 +119,15 @@ def category(request, main_title):
 
     product_variants = ProductVarient.objects.filter(product__in=products)
     variant_types = ProductVariantTypes.objects.filter(product_variant__in=product_variants)
+
+    # Fetch product variations
+    product_variations = ProductVariation.objects.filter(product__in=products)
+    # Fetch product variation types
+    variation_types = ProductVariationTypes.objects.filter(product_variation__in=product_variations)
+    # Fetch product variation types prices
+    variation_prices = {}
+    for variation_type in variation_types:
+        variation_prices[variation_type] = ProductVariationTypesPrices.objects.filter(product_variation_types=variation_type)
     
     materials = Product.objects.filter(main_category=main_categories).values_list('material', flat=True).distinct()
 

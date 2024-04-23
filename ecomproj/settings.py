@@ -158,8 +158,8 @@ EMAIL_HOST_USER = 'princesachdeva@nationalmarketingprojects.com'
 EMAIL_HOST_PASSWORD = 'Prince_django_autuh_admin_panel_49494'
 DEFAULT_FROM_EMAIL = 'princesachdeva@nationalmarketingprojects.com'  # Use the same email as HOST_USER
 
-KEY = 'rzp_live_88QdsrTOMs6hVM'
-SECRET = '7NU0clV5jBAoop8WzaMWywfQ'
+KEY = 'rzp_test_ECExtJt0vygzlY'
+SECRET = '0yItk37Ml4AEhMEUrgK2QX8m'
 
 
 
