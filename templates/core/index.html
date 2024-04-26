@@ -769,62 +769,18 @@
           }
         }'>
                     <div class="swiper-wrapper testimonials__wrapper">
+                        {% for testimonial in testimonials %}
                         <div class="swiper-slide testimonials__item mb-4 text-center">
                             <div class="w-740 mx-auto">
-                                <h5 class="fw-normal lh-2rem mb-4">“ Ipsum dolor sit amet, consectetur adipiscing
-                                    elit. Fringilla vel
-                                    tincidunt ipsum ac. Nam at et id leo pulvinar egestas mi lorem. Adipiscing
-                                    felis, vel faucibus in.
-                                    Hendrerit viverra elementum venenatis pellentesque pellentesque ornare “</h5>
-                                <p class="text-secondary mb-3">Helena Gibbson, 06 April 2023</p>
-                                <div class="border-circle overflow-hidden w-100px h-100px mx-auto">
-                                    <img loading="lazy" src="{% static './images/home/demo4/testimonial_avatar.png' %}" width="100"
+                                <h5 class="fw-normal lh-2rem mb-4">{{testimonial.testimonial|safe}}</h5>
+                                <p class="text-secondary mb-3">{{testimonial.testimonial_name}}</p>
+                                <!-- <div class="border-circle overflow-hidden w-100px h-100px mx-auto">
+                                    <img loading="lazy" src="{{testimonial.testimonial_image.url}}" width="100"
                                         height="100" alt="">
-                                </div>
+                                </div> -->
                             </div>
                         </div>
-                        <div class="swiper-slide testimonials__item mb-4 text-center">
-                            <div class="w-740 mx-auto">
-                                <h5 class="fw-normal lh-2rem mb-4">“ Ipsum dolor sit amet, consectetur adipiscing
-                                    elit. Fringilla vel
-                                    tincidunt ipsum ac. Nam at et id leo pulvinar egestas mi lorem. Adipiscing
-                                    felis, vel faucibus in.
-                                    Hendrerit viverra elementum venenatis pellentesque pellentesque ornare “</h5>
-                                <p class="text-secondary mb-3">Helena Gibbson, 06 April 2023</p>
-                                <div class="border-circle overflow-hidden w-100px h-100px mx-auto">
-                                    <img loading="lazy" src="{% static './images/home/demo4/testimonial_avatar.png' %}" width="100"
-                                        height="100" alt="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide testimonials__item mb-4 text-center">
-                            <div class="w-740 mx-auto">
-                                <h5 class="fw-normal lh-2rem mb-4">“ Ipsum dolor sit amet, consectetur adipiscing
-                                    elit. Fringilla vel
-                                    tincidunt ipsum ac. Nam at et id leo pulvinar egestas mi lorem. Adipiscing
-                                    felis, vel faucibus in.
-                                    Hendrerit viverra elementum venenatis pellentesque pellentesque ornare “</h5>
-                                <p class="text-secondary mb-3">Helena Gibbson, 06 April 2023</p>
-                                <div class="border-circle overflow-hidden w-100px h-100px mx-auto">
-                                    <img loading="lazy" src="{% static './images/home/demo4/testimonial_avatar.png' %}" width="100"
-                                        height="100" alt="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide testimonials__item mb-4 text-center">
-                            <div class="w-740 mx-auto">
-                                <h5 class="fw-normal lh-2rem mb-4">“ Ipsum dolor sit amet, consectetur adipiscing
-                                    elit. Fringilla vel
-                                    tincidunt ipsum ac. Nam at et id leo pulvinar egestas mi lorem. Adipiscing
-                                    felis, vel faucibus in.
-                                    Hendrerit viverra elementum venenatis pellentesque pellentesque ornare “</h5>
-                                <p class="text-secondary mb-3">Helena Gibbson, 06 April 2023</p>
-                                <div class="border-circle overflow-hidden w-100px h-100px mx-auto">
-                                    <img loading="lazy" src="{% static './images/home/demo4/testimonial_avatar.png' %}" width="100"
-                                        height="100" alt="">
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div><!-- /.swiper-wrapper -->
                 </div><!-- /.swiper-container js-swiper-slider -->
 

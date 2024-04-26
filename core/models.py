@@ -352,3 +352,12 @@ class InvoiceNumber(models.Model):
 
     def __str__(self):
         return f'Invoice No: INW2324-{self.number:04d}'
+    
+class Testimonials(models.Model):
+    testimonial_name = models.CharField(max_length=100)
+    testimonial_image = models.ImageField(upload_to="blogs-images", default="blogs.jpg")
+    testimonial = HTMLField()   
+    date = models.DateField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Testimonials"

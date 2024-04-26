@@ -33,6 +33,7 @@ def index(request):
     deal_of_week = Product.objects.filter(deal_of_week=True)
     summer_sale = Product.objects.filter(summer_sale=True)
     product_images = ProductImages.objects.filter(product__in=deal_of_week)
+    testimonials = Testimonials.objects.all()
 
     new_arrival_main_categories = Main_category.objects.filter(product__in=new_arrival).distinct()
 
@@ -107,6 +108,7 @@ def index(request):
         "new_arrival_main_categories":new_arrival_main_categories,
         "product_variants": product_variants,
         "product_variant_types": product_variant_types,
+        "testimonials": testimonials,
     }
 
     return render(request, 'core/index.html', context)

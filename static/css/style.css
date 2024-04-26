@@ -20719,3 +20719,18 @@ ul.social-links.list-unstyled.custom_header {
 .navigation__list.list-unstyled.d-flex li a {
   color: #004818 !important;
 }
+
+@media (max-width:480px) {
+  .slideshow.type3 {
+    height: 10rem;
+  }
+
+  .swiper-pagination-bullet {
+    display: none;
+  }
+
+  .slideshow-text h6,
+  .slideshow-text h2 {
+    font-size: 1rem !important;
+  }
+}

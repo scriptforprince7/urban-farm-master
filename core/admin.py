@@ -78,7 +78,10 @@ class PrivacyPolicyAdmin(admin.ModelAdmin):
     list_display = ['privacy_policy_content']     
 
 class BlogsAdmin(admin.ModelAdmin):
-    list_display = ['blog_title', 'blog_image', 'blog_description']      
+    list_display = ['blog_title', 'blog_image', 'blog_description']  
+
+class TestimonialsAdmin(admin.ModelAdmin):
+    list_display = ['testimonial_name', 'testimonial']        
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Main_category, MainCategoryAdmin)
@@ -90,4 +93,5 @@ admin.site.register(Wishlist, wishlistAdmin)
 admin.site.register(Address, AddressAdmin)
 admin.site.register(PrivacyPolicy, PrivacyPolicyAdmin)
 admin.site.register(Blogs, BlogsAdmin)
+admin.site.register(Testimonials, TestimonialsAdmin)
 
