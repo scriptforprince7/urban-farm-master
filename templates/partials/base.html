@@ -281,7 +281,7 @@
 <!-- Mobile Header -->
 <!-- Mobile Header -->
 <div class="header-mobile header_sticky">
-  -
+  
   <div class="container d-flex align-items-center h-100">
     <a class="mobile-nav-activator d-block position-relative" href="#">
       <svg
@@ -392,9 +392,9 @@
           <li class="navigation__item">
             <a href="#" class="navigation__link">Testimonials</a>
           </li>
-          <li class="navigation__item">
+          {% comment %} <li class="navigation__item">
             <a href="#" class="navigation__link">Offers</a>
-          </li>
+          </li> {% endcomment %}
         </ul>
         <!-- /.navigation__list -->
       </div>
@@ -570,9 +570,9 @@
        
       </ul>
 
-      <a href="/blog" style="color: white" class="navigation__link">Blog</a>
+      <a href="https://wa.me/918879658654" style="color: white" class="navigation__link">+91-8879658654</a>
       {% if user.is_authenticated %}
-      <a href="#" class="navigation__link" style="color: white;">Hello,  {{ user.username }} <i class="fa-solid fa-right-to-bracket"></i></a>
+      <a href="/dashboard" class="navigation__link" style="color: white;">Hello,  {{ user.username }} <i class="fa-solid fa-right-to-bracket"></i></a>
        {% endif %}
 
     </div>
@@ -584,22 +584,25 @@
     <nav class="navigation">
       <ul class="navigation__list list-unstyled d-flex">
         <li class="navigation__item">
+          <a href="/" class="navigation__link">Home</a>
+        </li>
+        <li class="navigation__item">
           <a href="/about-us" class="navigation__link">About</a>
         </li>
         <li class="navigation__item">
           <a href="/shop-category" class="navigation__link">Category</a>
         </li>
         <li class="navigation__item">
-          <a href="/grow-method" class="navigation__link">Grow Method</a>
+          <a href="/blog" class="navigation__link">Blogs</a>
         </li>
         <li class="navigation__item">
           <a href="/contact-us" class="navigation__link">Contact</a>
         </li>
-        <li class="navigation__item">
+        {% comment %} <li class="navigation__item">
           <a href="" class="navigation__link"
             ><span style="color: rgb(61, 247, 61)">Offers</span></a
           >
-        </li>
+        </li> {% endcomment %}
       </ul>
     </nav>
 
