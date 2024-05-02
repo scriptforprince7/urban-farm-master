@@ -772,8 +772,9 @@
                         {% for testimonial in testimonials %}
                         <div class="swiper-slide testimonials__item mb-4 text-center">
                             <div class="w-740 mx-auto">
-                                <h5 class="fw-normal lh-2rem mb-4">{{testimonial.testimonial|safe}}</h5>
-                                <p class="text-secondary mb-3">{{testimonial.testimonial_name}}</p>
+                                <h5 class="fw-normal lh-2rem mb-4" style="text-align: justify;">{{testimonial.testimonial|safe}}</h5>
+                                <p class="text-secondary mb-1">{{testimonial.testimonial_name}}</p>
+                                <p class="text-secondary mb-0"><b>{{testimonial.testimonial_company}}</b></p>
                                 <!-- <div class="border-circle overflow-hidden w-100px h-100px mx-auto">
                                     <img loading="lazy" src="{{testimonial.testimonial_image.url}}" width="100"
                                         height="100" alt="">

@@ -443,7 +443,6 @@ def blog_details(request, blog_slug):
 def grow_method(request):
     return render(request, "core/grow-method.html")
 
-@login_required
 def payment_invoice(request):
     razorpay_payment_id = request.GET.get('razorpay_payment_id')
     razorpay_order_id = request.GET.get('razorpay_order_id')
@@ -643,7 +642,6 @@ def payment_invoice(request):
     return render(request, "core/payment_invoice.html", {'current_datetime': current_datetime, 'cart_data': request.session.get('cart_data_obj', {}), 'totalcartitems': len(request.session.get('cart_data_obj', {})), 'cart_total_amount': cart_total_amount, **context})
 
 
-@login_required
 def checkout_view(request):
     cart_total_amount = 0
     total_amount = 0
@@ -651,8 +649,16 @@ def checkout_view(request):
     total_gst = 0
     user_zipcode = request.POST.get("checkout_zipcode")  # Get user's zipcode from the form
 
-    # Define Maharashtra zipcodes
-    maharashtra_zipcodes = ["400012", "400067", "400004", "400033", ...]  # Add all Mumbai zipcodes here
+    def get_mumbai_zipcodes():
+        geolocator = Nominatim(user_agent="my_geocoder")
+        location = geolocator.geocode("Mumbai, India")
+        if location:
+            zipcodes = location.raw.get('display_name').split(',')[-2].strip().split(' ')
+            return zipcodes
+        else:
+            return None
+        
+    maharashtra_zipcodes = get_mumbai_zipcodes()
 
     # Check if user's zipcode is in Maharashtra
     if user_zipcode in maharashtra_zipcodes:
@@ -665,6 +671,19 @@ def checkout_view(request):
         cgst_factor = Decimal('0.09')   # CGST rate for other states (9%)
         sgst_factor = Decimal('0.09')   # SGST rate for other states (9%)
         igst_factor = Decimal('1')      # IGST will be 100%
+
+    # Check if the user is authenticated
+    if request.user.is_authenticated:
+        # If the user is logged in, associate the order with the logged-in user
+        order = CartOrder.objects.create(
+            user=request.user,  # Use the logged-in user
+            price=total_amount
+        )
+    else:
+        # If the user is not logged in, create the order without associating it with any user
+        order = CartOrder.objects.create(
+            price=total_amount
+        )
 
     if 'cart_data_obj' in request.session:
         # Calculate total amount, price without GST, and total GST
@@ -682,11 +701,6 @@ def checkout_view(request):
             total_gst += item_gst  # Add item's GST to total GST
 
             # Do whatever you want with CGST, SGST, and IGST here
-
-    order = CartOrder.objects.create(
-        user=request.user,
-        price=total_amount
-    )
 
     for p_id, item in request.session['cart_data_obj'].items():
         cart_total_amount += int(item['qty']) * float(item['price'])
@@ -730,6 +744,7 @@ def checkout_view(request):
                    'totalcartitems': len(request.session.get('cart_data_obj', {})),
                    'cart_total_amount': cart_total_amount,
                    **context})
+
 
 @login_required
 def dashboard(request):

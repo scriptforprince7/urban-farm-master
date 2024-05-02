@@ -260,13 +260,15 @@ class ProductVariationTypesPrices(models.Model):
         verbose_name_plural = "Product Variation Types Prices"
 
 class CartOrder(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank = True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     price = models.DecimalField(max_digits=99999, decimal_places=2, default="1")
     paid_status = models.BooleanField(default=False)
     order_date = models.DateTimeField(auto_now_add=True)
     product_status = models.CharField(choices=STATUS_CHOICE, max_length=30, default="processing")
 
     class Meta:
+        verbose_name_plural = "Cart Orders"
+
         verbose_name_plural = "Cart Order"
 
 
@@ -355,6 +357,7 @@ class InvoiceNumber(models.Model):
     
 class Testimonials(models.Model):
     testimonial_name = models.CharField(max_length=100)
+    testimonial_company = models.CharField(max_length=100)
     testimonial_image = models.ImageField(upload_to="blogs-images", default="blogs.jpg")
     testimonial = HTMLField()   
     date = models.DateField(auto_now_add=True)
