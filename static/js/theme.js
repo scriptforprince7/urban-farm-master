@@ -884,15 +884,52 @@ function pureFadeOut(e) {
             event.preventDefault();
             const $parentEl = event.target.parentElement;
             const $divider  = $parentEl.nextElementSibling;
-            $parentEl.classList.add('_removed');
-            $divider && $divider.classList.contains('cart-drawer-divider') && $divider.classList.add('_removed');
-            setTimeout(() => {
-              $parentEl.remove();
-              $divider && $divider.classList.contains('cart-drawer-divider') && $divider.remove();
-            }, 350);
+            
+            // Show confirmation dialog using SweetAlert
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // User confirmed the deletion, proceed with removal
+                $parentEl.classList.add('_removed');
+                $divider && $divider.classList.contains('cart-drawer-divider') && $divider.classList.add('_removed');
+                setTimeout(() => {
+                  $parentEl.remove();
+                  $divider && $divider.classList.contains('cart-drawer-divider') && $divider.remove();
+                  
+                  // Proceed with AJAX request to delete the product from the cart
+                  const product_id = event.target.getAttribute('data-product');
+                  $.ajax({
+                    url: "/delete-from-cart",
+                    data: {
+                      "id": product_id
+                    },
+                    dataType: "json",
+                    beforeSend: function(){
+                      // Optionally hide the button or show a loading indicator
+                      // this_val.hide();
+                    },
+                    success: function(response){
+                      // Optionally show the button again or hide the loading indicator
+                      // this_val.show();
+                      $(".cart-items-count").text(response.totalcartitems);
+                      $("#cart-list").html(response.data);
+                    }
+                  });
+                }, 350);
+              }
+            });
           });
         });
       }
+      
+      
     });
 
     return CartDrawer;

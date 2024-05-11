@@ -89,15 +89,17 @@ function updateCartItemsList(cartData) {
                     </a>  
                     <p class="cart-drawer-item__option text-secondary">Sku ID: ${item.sku}</p>
                     <div class="d-flex align-items-center justify-content-between mt-1">
-                        <div class="qty-control position-relative">
-                            <input type="number" name="quantity" value="${item.qty}" min="1"
-                                class="qty-control__number border-0 text-center" />
-                            
-                        </div>
-                        <span class="cart-drawer-item__price money price">₹ ${item.price}</span>
-                    </div>
+                      <div class="position-relative">
+                       <span>Qty:</span> <span class="cart-drawer-item__price money price" style="font-size: 1em;">${item.qty}</span>
+                          <!-- <input type="number" name="quantity" value="${item.qty}" min="1"
+                              class="qty-control__number border-0 text-center" />
+                          <div class="qty-control__reduce text-start">-</div>
+                          <div class="qty-control__increase text-end">+</div> -->
+                      </div>
+                      <span class="cart-drawer-item__price money price">₹ ${item.price}</span>
+                  </div>
                 </div>
-                <button class="btn-close-xs position-absolute top-0 end-0 js-cart-item-remove"></button>
+                <button class="btn-close-xs position-absolute top-0 end-0 remove-cart delete-product" data-product="{{productId}}"></button>
             </div>
 
             <div class="cart-drawer-actions position-absolute start-0 bottom-0 w-100">
