@@ -75,7 +75,9 @@ $(document).ready(function(){
 function updateCartItemsList(cartData) {
     var cartItemsList = $('.cart-drawer-items-list');
     cartItemsList.empty(); // Clear existing items
-
+    
+    var subtotalAmount = 0; // Initialize subtotal amount
+    
     // Iterate over cart items and append them to the list
     $.each(cartData, function(productId, item) {
         var itemHtml = `
@@ -99,20 +101,18 @@ function updateCartItemsList(cartData) {
                       <span class="cart-drawer-item__price money price">₹ ${item.price}</span>
                   </div>
                 </div>
-                <button class="btn-close-xs position-absolute top-0 end-0 remove-cart delete-product" data-product="{{productId}}"></button>
-            </div>
-
-            <div class="cart-drawer-actions position-absolute start-0 bottom-0 w-100">
-          <hr class="cart-drawer-divider" />
-          <div class="d-flex justify-content-between">
-              <h6 class="fs-base fw-medium">SUBTOTAL: </h6>
-              <span class="cart-subtotal fw-medium">₹ {{cart_total_amount|floatformat:"2"}}</span>
-          </div>
-          <hr class="cart-drawer-divider" />
-        `;
+                <button class="btn-close-xs position-absolute top-0 end-0 remove-cart delete-product" data-product="${productId}"></button>
+            </div>`;
         cartItemsList.append(itemHtml);
+        
+        // Add item price to subtotal
+        subtotalAmount += parseFloat(item.price);
     });
+
+    // Update subtotal amount
+    $('.cart-subtotal').text(`₹ ${subtotalAmount.toFixed(2)}`);
 }
+
     
     
     $(document).ready(function(){
