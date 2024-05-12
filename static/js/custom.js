@@ -177,6 +177,7 @@ $(document).ready(function(){
                 data : {
                     "id": product_id,
                     "qty": product_quantity,
+                    "refresh_page": true
                 },
                 dataType: "json",
                 beforeSend: function(){
@@ -185,7 +186,12 @@ $(document).ready(function(){
                 success: function(response){
                     this_val.show()
                     $(".cart-items-count").text(response.totalcartitems)
-                    $("#cart-list").html(response.data)
+                    $("#cart-list").html(response.data);
+
+                    if (response.refresh_page) {
+                        // Refresh the page
+                        window.location.reload();
+                    }
                 }
             })
         })

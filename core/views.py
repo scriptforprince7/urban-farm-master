@@ -303,6 +303,7 @@ def delete_item_from_cart(request):
 def update_cart(request):
     product_id = str(request.GET['id'])
     product_qty = request.GET['qty']
+    refresh_page = request.GET.get('refresh_page', False)
     if 'cart_data_obj' in request.session:
         if product_id in request.session['cart_data_obj']:
            cart_data = request.session['cart_data_obj']
@@ -315,8 +316,8 @@ def update_cart(request):
             cart_total_amount += int(item['qty']) * float(item['price'])
 
 
-    context = render_to_string("core/async/cart-list.html", {"cart_data": request.session['cart_data_obj'], 'totalcartitems': len(request.session['cart_data_obj']), 'cart_total_amount': cart_total_amount})
-    return JsonResponse({"data": context, 'totalcartitems': len(request.session['cart_data_obj'])}) 
+    context = render_to_string("core/cart.html", {"cart_data": request.session['cart_data_obj'], 'totalcartitems': len(request.session['cart_data_obj']), 'cart_total_amount': cart_total_amount})
+    return JsonResponse({"data": context, 'totalcartitems': len(request.session['cart_data_obj']), 'refresh_page': refresh_page}) 
 
 @login_required
 def checkout_view(request):
