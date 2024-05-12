@@ -36,6 +36,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% if cart_data.items %}
                         {% for product_id, item in cart_data.items  %}
                         <tr>
                             <th>{{ forloop.counter }}</th>
@@ -90,6 +91,13 @@
                              </td>
                         </tr>
                         {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="7" style="text-align: center;">
+                                <!-- Add your image here -->
+                                <img src="{% static 'images/no-product.png' %}" alt="Empty Cart Image" width="50%">
+                        {% endif %}
+                            
                     </tbody>
                 </table>
                 {% comment %} <div class="cart-table-footer">

@@ -796,6 +796,11 @@ function pureFadeOut(e) {
     return Footer;
   })();
 
+  function updateCartSubtotal(subtotalAmount) {
+    // Update subtotal amount
+    $('.cart-subtotal').text(`₹ ${subtotalAmount.toFixed(2)}`);
+}
+
   // Customer login form
   UomoSections.CustomerSideForm = (function () {
     function CustomerSideForm () {
@@ -920,7 +925,12 @@ function pureFadeOut(e) {
                       // this_val.show();
                       $(".cart-items-count").text(response.totalcartitems);
                       $("#cart-list").html(response.data);
-                    }
+                      
+                      // Update the cart subtotal dynamically after deleting the product
+                      updateCartSubtotal(response.cart_total_amount);
+                  }
+                  
+                  
                   });
                 }, 350);
               }
@@ -928,12 +938,12 @@ function pureFadeOut(e) {
           });
         });
       }
-      
-      
     });
 
     return CartDrawer;
   })();
+
+
 
   UomoSections.SwiperSlideshow = (function () {
     function SwiperSlideshow () {

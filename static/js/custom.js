@@ -115,44 +115,52 @@ function updateCartItemsList(cartData) {
 
     
     
-    $(document).ready(function(){
-        $(".delete-product").on("click", function(){
-            let product_id = $(this).attr("data-product");
-            let this_val = $(this);
-    
-            console.log("Product ID:", product_id);
-    
-            // Display SweetAlert confirmation dialog
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // User confirmed the deletion, proceed with AJAX request
-                    $.ajax({
-                        url: "/delete-from-cart",
-                        data: {
-                            "id": product_id
-                        },
-                        dataType: "json",
-                        beforeSend: function(){
-                            this_val.hide();
-                        },
-                        success: function(response){
-                            this_val.show();
-                            $(".cart-items-count").text(response.totalcartitems);
-                            $("#cart-list").html(response.data);
+$(document).ready(function(){
+    $(".delete-product").on("click", function(){
+        let product_id = $(this).attr("data-product");
+        let this_val = $(this);
+
+        console.log("Product ID:", product_id);
+
+        // Display SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed the deletion, proceed with AJAX request
+                $.ajax({
+                    url: "/delete-from-cart",
+                    data: {
+                        "id": product_id,
+                        "refresh_page": true // Add a parameter to indicate page refresh
+                    },
+                    dataType: "json",
+                    beforeSend: function(){
+                        this_val.hide();
+                    },
+                    success: function(response){
+                        this_val.show();
+                        $(".cart-items-count").text(response.totalcartitems);
+                        $("#cart-list").html(response.data);
+                        
+                        // Check if the page should be refreshed
+                        if (response.refresh_page) {
+                            // Refresh the page
+                            window.location.reload();
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
         });
     });
+});
+
     
 
     $(document).ready(function(){

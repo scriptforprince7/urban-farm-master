@@ -933,6 +933,7 @@
       </div>
   
       <div class="aside-content cart-drawer-items-list">
+        {% if cart_data.items %}
         {% for product_id, item in cart_data.items  %}
           <div class="cart-drawer-item d-flex position-relative">
               <div class="position-relative">
@@ -958,6 +959,17 @@
          
           <hr class="cart-drawer-divider" />
           {% endfor %}
+          {% else %}
+          <div style="text-align: center;">
+          <img src="{% static 'images/no-product.png' %}" alt="Empty Cart Image" width="70%">
+          <style>
+            .explore:hover{
+              background-color: #9fcfb5;
+            }
+          </style>
+           <a href="/shop-category" style="text-align: center;"><button class="btn btn-success mt-3 d-block explore">Explore Categories</button></a> 
+        </div>
+          {% endif %}
   
       </div>
       <div class="cart-drawer-actions position-absolute start-0 bottom-0 w-100">

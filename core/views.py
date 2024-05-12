@@ -274,6 +274,8 @@ def search_view(request):
 
 def delete_item_from_cart(request):
     product_id = str(request.GET['id'])
+    refresh_page = request.GET.get('refresh_page', False)
+
     if 'cart_data_obj' in request.session:
         if product_id in request.session['cart_data_obj']:
            cart_data = request.session['cart_data_obj']
@@ -285,9 +287,17 @@ def delete_item_from_cart(request):
         for p_id, item in request.session['cart_data_obj'].items():
             cart_total_amount += int(item['qty']) * float(item['price'])
 
+    context = {
+        "cart_data": request.session['cart_data_obj'],
+        'totalcartitems': len(request.session['cart_data_obj']),
+        'cart_total_amount': cart_total_amount,
+        'refresh_page': refresh_page,  # Include refresh_page flag in context
+    }
 
-    context = render_to_string("core/async/cart-list.html", {"cart_data": request.session['cart_data_obj'], 'totalcartitems': len(request.session['cart_data_obj']), 'cart_total_amount': cart_total_amount})
-    return JsonResponse({"data": context, 'totalcartitems': len(request.session['cart_data_obj'])})        
+    rendered_html = render_to_string("core/cart.html", context)
+    
+    # Return JSON response with rendered HTML and refresh_page flag
+    return JsonResponse({"data": rendered_html, 'totalcartitems': len(request.session['cart_data_obj']), 'refresh_page': refresh_page})      
 
 
 def update_cart(request):
