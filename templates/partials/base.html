@@ -933,42 +933,40 @@
       </div>
   
       <div class="aside-content cart-drawer-items-list">
-        {% if cart_data.items %}
-        {% for product_id, item in cart_data.items  %}
-          <div class="cart-drawer-item d-flex position-relative">
-              <div class="position-relative">
-                  <img loading="lazy" class="cart-drawer-item__img" src="{{item.image}}" alt="{{item.title}}" />
-              </div>
-              <div class="cart-drawer-item__info flex-grow-1">
-                <a href="{% url 'core:product_new' item.title %}"><h6 class="cart-drawer-item__title fw-normal">{{item.title}}</h6></a>  
-                  <p class="cart-drawer-item__option text-secondary">Sku ID: {{item.sku}}</p>
-                  <div class="d-flex align-items-center justify-content-between mt-1">
+          {% if cart_data.items %}
+              {% for product_id, item in cart_data.items %}
+                  <div class="cart-drawer-item d-flex position-relative">
                       <div class="position-relative">
-                       <span>Qty:</span> <span class="cart-drawer-item__price money price" style="font-size: 1em;">{{item.qty}}</span>
-                          <!-- <input type="number" name="quantity" value="{{item.qty}}" min="1"
-                              class="qty-control__number border-0 text-center" />
-                          <div class="qty-control__reduce text-start">-</div>
-                          <div class="qty-control__increase text-end">+</div> -->
+                          <img loading="lazy" class="cart-drawer-item__img" src="{{ item.image }}" alt="{{ item.title }}" />
                       </div>
-                      <span class="cart-drawer-item__price money price">₹ {{item.price|floatformat:"2"}}</span>
+                      <div class="cart-drawer-item__info flex-grow-1">
+                          <a href="{% url 'core:product_new' item.title %}">
+                              <h6 class="cart-drawer-item__title fw-normal">{{ item.title }}</h6>
+                          </a>
+                          <p class="cart-drawer-item__option text-secondary">Sku ID: {{ item.sku }}</p>
+                          <div class="d-flex align-items-center justify-content-between mt-1">
+                              <div class="position-relative">
+                                  <span>Qty:</span> <span class="cart-drawer-item__price money price" style="font-size: 1em;">{{ item.qty }}</span>
+                              </div>
+                              <span class="cart-drawer-item__price money price">₹ {{ item.price|floatformat:"2" }}</span>
+                          </div>
+                      </div>
+                      <button class="btn-close-xs position-absolute top-0 end-0 remove-cart delete-product js-cart-item-remove" data-product="{{ product_id }}"></button>
                   </div>
-              </div>
-  
-              <button class="btn-close-xs position-absolute top-0 end-0 remove-cart delete-product js-cart-item-remove" data-product="{{product_id}}"></button>
-          </div>
-         
-          <hr class="cart-drawer-divider" />
-          {% endfor %}
+                  <hr class="cart-drawer-divider" />
+              {% endfor %}
           {% else %}
-          <div style="text-align: center;">
-          <img src="{% static 'images/no-product.png' %}" alt="Empty Cart Image" width="70%">
-          <style>
-            .explore:hover{
-              background-color: #9fcfb5;
-            }
-          </style>
-           <a href="/shop-category" style="text-align: center;"><button class="btn btn-success mt-3 d-block explore">Explore Categories</button></a> 
-        </div>
+              <div style="text-align: center;">
+                  <img src="{% static 'images/no-product.png' %}" alt="Empty Cart Image" width="70%">
+                  <style>
+                      .explore:hover {
+                          background-color: #9fcfb5;
+                      }
+                  </style>
+                  <a href="/shop-category" style="text-align: center;">
+                      <button class="btn btn-success mt-3 d-block explore">Explore Categories</button>
+                  </a>
+              </div>
           {% endif %}
   
       </div>
@@ -976,12 +974,13 @@
           <hr class="cart-drawer-divider" />
           <div class="d-flex justify-content-between">
               <h6 class="fs-base fw-medium">SUBTOTAL: </h6>
-              <span class="cart-subtotal fw-medium">₹ {{cart_total_amount|floatformat:"2"}}</span>
+              <span class="cart-subtotal fw-medium">₹ {{ cart_total_amount|floatformat:"2" }}</span>
           </div>
           <a href="/cart" class="btn btn-light mt-3 d-block">View Cart</a>
           <a href="/checkout" class="btn btn-primary mt-3 d-block">Checkout</a>
       </div>
-  </div><!-- /.aside -->
+  </div>
+  <!-- /.aside -->
     <!-- Quick View -->
     <div class="modal fade" id="quickView" tabindex="-1">
         <div class="modal-dialog quick-view modal-dialog-centered">

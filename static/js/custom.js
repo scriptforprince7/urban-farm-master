@@ -71,7 +71,6 @@ $(document).ready(function(){
 });
 
 
-// Update cart items list function
 function updateCartItemsList(cartData) {
     var cartItemsList = $('.cart-drawer-items-list');
     cartItemsList.empty(); // Clear existing items
@@ -88,18 +87,14 @@ function updateCartItemsList(cartData) {
                 <div class="cart-drawer-item__info flex-grow-1">
                     <a href="{% url 'core:product_new' item.title %}">
                         <h6 class="cart-drawer-item__title fw-normal">${item.title}</h6>
-                    </a>  
+                    </a>
                     <p class="cart-drawer-item__option text-secondary">Sku ID: ${item.sku}</p>
                     <div class="d-flex align-items-center justify-content-between mt-1">
-                      <div class="position-relative">
-                       <span>Qty:</span> <span class="cart-drawer-item__price money price" style="font-size: 1em;">${item.qty}</span>
-                          <!-- <input type="number" name="quantity" value="${item.qty}" min="1"
-                              class="qty-control__number border-0 text-center" />
-                          <div class="qty-control__reduce text-start">-</div>
-                          <div class="qty-control__increase text-end">+</div> -->
-                      </div>
-                      <span class="cart-drawer-item__price money price">₹ ${item.price}</span>
-                  </div>
+                        <div class="position-relative">
+                            <span>Qty:</span> <span class="cart-drawer-item__price money price" style="font-size: 1em;">${item.qty}</span>
+                        </div>
+                        <span class="cart-drawer-item__price money price">₹ ${item.price}</span>
+                    </div>
                 </div>
                 <button class="btn-close-xs position-absolute top-0 end-0 remove-cart delete-product" data-product="${productId}"></button>
             </div>`;
@@ -113,10 +108,12 @@ function updateCartItemsList(cartData) {
     $('.cart-subtotal').text(`₹ ${subtotalAmount.toFixed(2)}`);
 }
 
+
     
     
 $(document).ready(function(){
-    $(".delete-product").on("click", function(){
+    // Event delegation for delete buttons
+    $(document).on("click", ".delete-product", function(){
         let product_id = $(this).attr("data-product");
         let this_val = $(this);
 
@@ -160,6 +157,7 @@ $(document).ready(function(){
         });
     });
 });
+
 
     
 
