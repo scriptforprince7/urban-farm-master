@@ -227,6 +227,21 @@
     };
 
     var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+        // Redirect to payment-fail page with error details as query parameters
+        var errorDetails = {
+            code: response.error.code,
+            description: response.error.description,
+            source: response.error.source,
+            step: response.error.step,
+            reason: response.error.reason,
+            order_id: response.error.metadata.order_id,
+            payment_id: response.error.metadata.payment_id
+        };
+        var queryString = Object.keys(errorDetails).map(key => key + '=' + encodeURIComponent(errorDetails[key])).join('&');
+        window.location.href = 'http://127.0.0.1:8000/payment-failed?' + queryString;
+    });
+    
 
     rzp1.on('payment.failed', function (response){
         alert(response.error.code);

@@ -26,6 +26,7 @@ urlpatterns = [
     path("cancellationandrefund/", cancellationandrefund, name="cancellationandrefund"),
     path("cart/", cart_view, name="cart_view"),
     path("payment-failed/", payment_failed_view, name="payment_failed_view"),
+    path("payment-success/", payment_success_view, name="payment_success_view"),
     path("dashboard/", dashboard, name="dashboard"),
     path("dashboard/myorders", orders, name="orders"),
     path("dashboard/myaddress", address, name="address"),

@@ -406,9 +406,12 @@ def checkout_view(request):
                    **context})
 
 
-@login_required
+
 def payment_failed_view(request):
-    return render(request, "core/payment-failed.html")
+    return render(request, "core/confirmation.html")
+
+def payment_success_view(request):
+    return render(request, "core/payment_confirm.html")
 
 def about(request):
     return render(request, "core/about-us.html")
@@ -654,6 +657,9 @@ def payment_invoice(request):
 
 
 def checkout_view(request):
+    if 'cart_data_obj' not in request.session or not request.session['cart_data_obj']:
+        messages.info(request, 'Please shop first before checkout')
+        return redirect('/cart')
     cart_total_amount = 0
     total_amount = 0
     price_wo_gst_total = 0

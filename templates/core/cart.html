@@ -1,6 +1,14 @@
 {% extends "partials/base.html" %} {% load static %} {% block main %}
 
 <main>
+    {% if messages %}
+    {% for message in messages  %}
+    <div class="alert alert-{{message.tags}}" role="alert" id="alertMessage">
+      {{message}}
+    </div>
+    {% endfor %}
+    {% endif %}
+
     <div class="mb-4 pb-4"></div>
     <section class="shop-checkout container">
         <h2 class="page-title">Cart</h2>
@@ -147,4 +155,12 @@
 </main>
 
 <div class="mb-5 pb-xl-5"></div>
+<script>
+    setTimeout(function() {
+      var alertMessage = document.getElementById('alertMessage');
+      if (alertMessage) {
+        alertMessage.style.display = 'none';
+      }
+    }, 5000); // 5000 milliseconds = 5 seconds
+  </script>
 {% endblock main %}
