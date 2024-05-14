@@ -97,7 +97,8 @@ function updateCartItemsList(cartData) {
                     </div>
                 </div>
                 <button class="btn-close-xs position-absolute top-0 end-0 remove-cart delete-product" data-product="${productId}"></button>
-            </div>`;
+            </div>
+            <hr class="cart-drawer-divider" />`; // Add HR after each item
         cartItemsList.append(itemHtml);
         
         // Add item price to subtotal
@@ -107,6 +108,7 @@ function updateCartItemsList(cartData) {
     // Update subtotal amount
     $('.cart-subtotal').text(`₹ ${subtotalAmount.toFixed(2)}`);
 }
+
 
 
     
