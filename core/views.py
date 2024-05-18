@@ -19,13 +19,15 @@ from django.db import transaction
 from datetime import datetime 
 from decimal import Decimal, ROUND_HALF_UP
 import re
-from geopy.geocoders import Nominatim
 from django.http import QueryDict
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags    
 from num2words import num2words
 from bs4 import BeautifulSoup
+from indian_pincode_details import get_pincode_details
+import indiapins
+
 
 def index(request):
     main_categories = Main_category.objects.filter(active_status='published')
@@ -193,6 +195,43 @@ def category(request, main_title):
         context["materials"] = materials
 
     return render(request, "core/category.html", context)
+
+
+from django.http import JsonResponse
+
+def fetch_pin_details(request):
+    if request.method == 'GET':
+        zipcode = request.GET.get('zipcode')
+        print('Zipcode received:', zipcode)
+        
+        pin_details_list = indiapins.matching(zipcode)
+        print('Pin details fetched:', pin_details_list)
+        
+        if pin_details_list:
+            # Format all pin details to be sent in the response
+            response_data = [
+                {
+                    'Name': pin_details.get('Name'),
+                    'Region': pin_details.get('Region'),
+                    'District': pin_details.get('District'),
+                    'Division': pin_details.get('Division'),
+                    'Block': pin_details.get('Block'),
+                    'Circle': pin_details.get('Circle'),
+                    'State': pin_details.get('State')
+                }
+                for pin_details in pin_details_list
+            ]
+            response = {
+                'success': True,
+                'data': response_data
+            }
+            print('Response:', response)  # Check if the response is correctly formatted
+            return JsonResponse(response)
+        else:
+            return JsonResponse({'success': False, 'error': 'Pincode details not found'})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
 
 
 def main_category(request):

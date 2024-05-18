@@ -30,7 +30,7 @@ SECRET_KEY = "django-insecure-=gz6u1d6i@v#$c@(zxy_@4+c7w)5hlumrdyu_ru^(_!kc!b5_8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.115', 'http://192.168.0.115/', 'https://192.168.0.115/']
 
 SITE_ID = 1
 # Application definition
@@ -142,7 +142,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 JAZZMIN_SETTINGS = {
     'site_header': "Urban Farms",
     'site_brand': "Urban Farms",
-    'site_logo': "images/logo-dark.png",
+    'site_logo': "images/admin-logo.png",
     'copyright': "Prince Sachdeva (Software Developer)",
 }
 

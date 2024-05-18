@@ -64,15 +64,41 @@
                         <div class="col-md-12">
                             <div class="form-floating my-3">
                                 <input type="text" class="form-control" id="checkout_zipcode"
-                                    placeholder="Postcode / ZIP *" />
+                                    placeholder="Postcode / ZIP *" onchange={fetchAddressDetails} />
                                 <label for="checkout_zipcode">Postcode / ZIP *</label>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-floating my-3">
-                                <input type="text" class="form-control" id="checkout_city"
-                                    placeholder="Town / City *" />
-                                <label for="checkout_city">Town / City *</label>
+                                <select class="form-control" id="pin_details_dropdown" onchange="updatePinDetails()">
+                                    <option value="">Select your area</option>
+                                </select>
+                                <label for="pin_details_dropdown">Select Area</label>
+                            </div>
+                        </div>
+        
+                        <div class="col-md-12">
+                            <div class="form-floating my-3">
+                                <input type="text" class="form-control" id="checkout_city" placeholder="Town / City *" />
+                                <label for="checkout_city">City *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating my-3">
+                                <input type="text" class="form-control" id="checkout_district" placeholder="District *" />
+                                <label for="checkout_district">District *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating my-3">
+                                <input type="text" class="form-control" id="checkout_division" placeholder="Division *" />
+                                <label for="checkout_division">Division *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating my-3">
+                                <input type="text" class="form-control" id="checkout_state" placeholder="State *" />
+                                <label for="checkout_state">State *</label>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -217,7 +243,7 @@
                 },
                 willClose: () => {
                     // Redirect to invoice page after alert closes
-                    window.location.href = `https://urbanfarm.store/payment-invoice/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}&${queryParams}`;
+                    window.location.href = `/payment-invoice/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}&${queryParams}`;
                 }
             });
         },
@@ -239,7 +265,7 @@
             payment_id: response.error.metadata.payment_id
         };
         var queryString = Object.keys(errorDetails).map(key => key + '=' + encodeURIComponent(errorDetails[key])).join('&');
-        window.location.href = 'http://127.0.0.1:8000/payment-failed?' + queryString;
+        window.location.href = '/payment-failed?' + queryString;
     });
     
 
@@ -286,22 +312,45 @@
         rzp1.open();
     }
 
-    function fetchAddressDetails(zipcode) {
-        $.getJSON('https://nominatim.openstreetmap.org/search?postalcode=' + zipcode + '&format=json', function(data) {
-            if (data.length > 0) {
-                var address = data[0];
-                var townCity = address['display_name']; 
-                $('#checkout_city').val(townCity);
-            }
-        });
-    }
+    var pinDetailsList = [];
 
-    $('#checkout_zipcode').on('input', function() {
-        var zipcode = $(this).val().trim();
-        if (zipcode !== '') {
-            fetchAddressDetails(zipcode);
-        }
+function fetchAddressDetails(zipcode) {
+    $.ajax({
+        url: '/fetch-pin-details',
+        type: 'GET',
+        data: { 'zipcode': zipcode },
+        success: function(response) {
+            if (response.success) {
+                pinDetailsList = response.data;
+                var dropdown = $('#pin_details_dropdown');
+                dropdown.empty();
+                dropdown.append('<option value="">Select your area</option>');
+
+                pinDetailsList.forEach(function(pinDetails, index) {
+                    dropdown.append('<option value="' + index + '">' + pinDetails.Name + '</option>');
+                });
+            }
+        },
     });
+}
+
+$('#checkout_zipcode').on('input', function() {
+    var zipcode = $(this).val().trim();
+    if (zipcode !== '') {
+        fetchAddressDetails(zipcode);
+    }
+});
+
+function updatePinDetails() {
+    var selectedIndex = $('#pin_details_dropdown').val();
+    if (selectedIndex !== "") {
+        var selectedPinDetails = pinDetailsList[selectedIndex];
+        $('#checkout_city').val(selectedPinDetails.Name);
+        $('#checkout_district').val(selectedPinDetails.District);
+        $('#checkout_division').val(selectedPinDetails.Division);
+        $('#checkout_state').val(selectedPinDetails.State);
+    }
+}
 
     function toggleGstFields() {
         var isChecked = document.getElementById("create_account").checked;

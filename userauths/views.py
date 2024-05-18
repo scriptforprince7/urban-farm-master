@@ -33,6 +33,7 @@ def register_view(request):
     return render(request, "userauths/sign-up.html", context)
 
 
+
 def send_verification_email(user, token):
     subject = "Verify Your Email"
     verification_url = f"{settings.BASE_URL}{reverse_lazy('userauths:verify-email', args=[token])}"
@@ -68,23 +69,20 @@ def login_view(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        try:
-            user = User.objects.get(email=email)
-            if user.email_verified:  # Check if the email is verified
-                user = authenticate(request, email=email, password=password)
+        user = authenticate(request, email=email, password=password)
 
-                if user is not None:
-                    login(request, user)
-                    messages.success(request, "You are logged in.")
-                    return redirect("core:dashboard")
-                else:
-                    messages.warning(request, "Invalid credentials.")
+        if user is not None:
+            if user.email_verified:
+                login(request, user)
+                messages.success(request, "You are logged in.")
+                return redirect("core:dashboard")
             else:
                 messages.warning(request, "Your email is not verified yet. Please verify your email before logging in.")
-        except User.DoesNotExist:
-            messages.warning(request, f"User with {email} does not exist")
+        else:
+            messages.warning(request, "Invalid credentials.")
 
     return render(request, "userauths/sign-in.html")
+
 
 
 
