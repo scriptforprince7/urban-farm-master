@@ -209,7 +209,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     var options = {
-        "key": "rzp_live_88QdsrTOMs6hVM",
+        "key": "rzp_test_VhrJLxgWbmNR8Q",
         "amount": "{{payment.amount}}",
         "currency": "INR",
         "name": "Urban Farm",
@@ -228,6 +228,10 @@
                 'shipping_address': document.getElementById("checkout_shipping_address").value.trim(),
                 'phone': document.getElementById("checkout_phone").value.trim(),
                 'email': document.getElementById("checkout_email").value.trim(),
+                'checkout_city': document.getElementById("checkout_city").value.trim(),
+                'checkout_district': document.getElementById("checkout_district").value.trim(),
+                'checkout_division': document.getElementById("checkout_division").value.trim(),
+                'checkout_state': document.getElementById("checkout_state").value.trim(),
             };
 
             var queryParams = Object.keys(formData).map(key => key + '=' + encodeURIComponent(formData[key])).join('&');
@@ -289,8 +293,12 @@
         var zipcode = document.getElementById("checkout_zipcode").value.trim();
         var phone = document.getElementById("checkout_phone").value.trim();
         var email = document.getElementById("checkout_email").value.trim();
+        var checkout_city = document.getElementById("checkout_city").value.trim();
+        var checkout_district = document.getElementById("checkout_district").value.trim();
+        var checkout_division = document.getElementById("checkout_division").value.trim();
+        var checkout_state = document.getElementById("checkout_state").value.trim();
     
-        if (firstName === '' || lastName === '' || streetAddress === '' || shippingAddress === '' || city === '' || zipcode === '' || phone === '' || email === '') {
+        if (firstName === '' || lastName === '' || streetAddress === '' || shippingAddress === '' || city === '' || zipcode === '' || phone === '' || email === '' || checkout_city === '' || checkout_district === '' || checkout_division === '' || checkout_state === '') {
             alert('Please fill in all details.');
             return false;
         } else if (phone.length !== 10 || isNaN(phone)) {

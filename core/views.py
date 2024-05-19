@@ -27,6 +27,7 @@ from num2words import num2words
 from bs4 import BeautifulSoup
 from indian_pincode_details import get_pincode_details
 import indiapins
+import json
 
 
 def index(request):
@@ -358,92 +359,6 @@ def update_cart(request):
     context = render_to_string("core/cart.html", {"cart_data": request.session['cart_data_obj'], 'totalcartitems': len(request.session['cart_data_obj']), 'cart_total_amount': cart_total_amount})
     return JsonResponse({"data": context, 'totalcartitems': len(request.session['cart_data_obj']), 'refresh_page': refresh_page}) 
 
-@login_required
-def checkout_view(request):
-    cart_total_amount = 0
-    total_amount = 0
-    price_wo_gst_total = 0
-    total_gst = 0
-    user_zipcode = request.POST.get("checkout_zipcode")  # Get user's zipcode from the form
-
-    # Define Maharashtra zipcodes
-    maharashtra_zipcodes = ["400012", "400067", "400004", "400033", ...]  # Add all Mumbai zipcodes here
-
-    # Check if user's zipcode is in Maharashtra
-    if user_zipcode in maharashtra_zipcodes:
-        # Maharashtra zipcode logic
-        cgst_factor = 0.5  # CGST and SGST will be 50% each
-        igst_factor = 0  # IGST will be 0%
-    else:
-        # Non-Maharashtra zipcode logic
-        cgst_factor = 0  # CGST will be 0%
-        igst_factor = 1  # IGST will be 100%
-
-    if 'cart_data_obj' in request.session:
-        # Calculate total amount, price without GST, and total GST
-        for p_id, item in request.session['cart_data_obj'].items():
-            total_amount += int(item['qty']) * float(item['price'])
-            price_wo_gst_total += int(item['qty']) * float(item.get('price_wo_gst', item['price']))
-            item_gst = (Decimal(item['price']) - Decimal(item.get('price_wo_gst', item['price']))) * int(
-                item['qty'])  # Calculate GST for this item
-
-            # Calculate CGST, SGST, and IGST for each product based on the user's zipcode
-            cgst = item_gst * cgst_factor
-            sgst = item_gst * cgst_factor
-            igst = item_gst * igst_factor
-
-            total_gst += item_gst  # Add item's GST to total GST
-
-            # Do whatever you want with CGST, SGST, and IGST here
-
-    order = CartOrder.objects.create(
-        user=request.user,
-        price=total_amount
-    )
-
-    for p_id, item in request.session['cart_data_obj'].items():
-        cart_total_amount += int(item['qty']) * float(item['price'])
-
-        cart_order_products = CartOrderItems.objects.create(
-            order=order,
-            invoice_no="order_id-" + str(order.id),
-            item=item['title'],
-            image=item['image'],
-            qty=item['qty'],
-            price=item['price'],
-            total=float(item['qty']) * float(item['price'])
-        )
-
-    cart_total_amount = 0
-    if 'cart_data_obj' in request.session:
-        with transaction.atomic():
-            for p_id, item in request.session['cart_data_obj'].items():
-                cart_total_amount += int(item['qty']) * float(item['price'])
-                product = Product.objects.get(pid=p_id)
-                client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
-                payment = client.order.create(
-                    {'amount': int(item['qty']) * float(item['price']) * 100, 'currency': 'INR',
-                     'payment_capture': 1})
-                product.razor_pay_order_id = payment['id']
-                product.save()
-
-    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
-    payment = client.order.create({'amount': cart_total_amount * 100, 'currency': 'INR', 'payment_capture': 1})
-
-    context = {
-        "payment": payment,
-        "price_wo_gst_total": price_wo_gst_total,
-        "total_gst": total_gst,
-        "user_zipcode": user_zipcode,
-        "maharashtra_zipcodes": maharashtra_zipcodes,
-    }
-
-    return render(request, "core/checkout.html",
-                  {'cart_data': request.session.get('cart_data_obj', {}),
-                   'totalcartitems': len(request.session.get('cart_data_obj', {})),
-                   'cart_total_amount': cart_total_amount,
-                   **context})
-
 
 
 def payment_failed_view(request):
@@ -520,20 +435,7 @@ def payment_invoice(request):
 
     current_datetime = datetime.now() 
 
-    # Define Maharashtra zipcodes
-    maharashtra_zipcodes = ["400001", "400002", "400003", "400004", "400005", "400006", "400007", "400008", "400009", "400010", 
-                        "400011", "400012", "400013", "400014", "400015", "400016", "400017", "400018", "400019", "400020", 
-                        "400021", "400022", "400023", "400024", "400025", "400026", "400027", "400028", "400029", "400030", 
-                        "400031", "400032", "400033", "400034", "400035", "400036", "400037", "400038", "400039", "400040", 
-                        "400041", "400042", "400043", "400044", "400045", "400046", "400047", "400048", "400049", "400050",
-                        "400051", "400052", "400053", "400054", "400055", "400056", "400057", "400058", "400059", "400060", 
-                        "400061", "400062", "400063", "400064", "400065", "400066", "400067", "400068", "400069", "400070", 
-                        "400071", "400072", "400073", "400074", "400075", "400076", "400077", "400078", "400079", "400080", 
-                        "400081", "400082", "400083", "400084", "400085", "400086", "400087", "400088", "400089", "400090", 
-                        "400091", "400092", "400093", "400094", "400095", "400096", "400097", "400098", "400099", "400100",
-                        "410201", "410202", "410203", "410204", "410205", "410206", "410207", "410208", "410209", "410210",
-                        # Add more zip codes as needed
-                        ]
+    maharashtra_zipcodes = load_maharashtra_zipcodes()
 
     if 'cart_data_obj' in request.session:
     # Initialize dictionaries to store CGST, SGST, and IGST amounts for each product
@@ -694,6 +596,13 @@ def payment_invoice(request):
 
     return render(request, "core/payment_invoice.html", {'current_datetime': current_datetime, 'cart_data': request.session.get('cart_data_obj', {}), 'totalcartitems': len(request.session.get('cart_data_obj', {})), 'cart_total_amount': cart_total_amount, **context})
 
+def load_maharashtra_zipcodes():
+    try:
+        with open('maharashtra_zipcodes.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
 
 def checkout_view(request):
     if 'cart_data_obj' not in request.session or not request.session['cart_data_obj']:
@@ -705,49 +614,8 @@ def checkout_view(request):
     total_gst = 0
     user_zipcode = request.POST.get("checkout_zipcode")  # Get user's zipcode from the form
 
-    # Define Maharashtra zipcodes
-    maharashtra_zipcodes = [
-    "400001", "400002", "400003", "400004", "400005",
-    "400006", "400007", "400008", "400009", "400010",
-    "400011", "400012", "400013", "400014", "400015",
-    "400016", "400017", "400018", "400019", "400020",
-    "400021", "400022", "400023", "400024", "400025",
-    "400026", "400027", "400028", "400029", "400030",
-    "400031", "400032", "400033", "400034", "400035",
-    "400036", "400037", "400038", "400039", "400040",
-    "400041", "400042", "400043", "400044", "400045",
-    "400046", "400047", "400048", "400049", "400050",
-    "400051", "400052", "400053", "400054", "400055",
-    "400056", "400057", "400058", "400059", "400060",
-    "400061", "400062", "400063", "400064", "400065",
-    "400066", "400067", "400068", "400069", "400070",
-    "400071", "400072", "400073", "400074", "400075",
-    "400076", "400077", "400078", "400079", "400080",
-    "400081", "400082", "400083", "400084", "400085",
-    "400086", "400087", "400088", "400089", "400090",
-    "400091", "400092", "400093", "400094", "400095",
-    "400096", "400097", "400098", "400099", "400100",
-    "400101", "400102", "400103", "400104", "400105",
-    "400106", "400107", "400108", "400109", "400110",
-    "400111", "400112", "400113", "400114", "400115",
-    "400116", "400117", "400118", "400119", "400120",
-    "400121", "400122", "400123", "400124", "400125",
-    "400126", "400127", "400128", "400129", "400130",
-    "400131", "400132", "400133", "400134", "400135",
-    "400136", "400137", "400138", "400139", "400140",
-    "400141", "400142", "400143", "400144", "400145",
-    "400146", "400147", "400148", "400149", "400150",
-    "400151", "400152", "400153", "400154", "400155",
-    "400156", "400157", "400158", "400159", "400160",
-    "400161", "400162", "400163", "400164", "400165",
-    "400166", "400167", "400168", "400169", "400170",
-    "400171", "400172", "400173", "400174", "400175",
-    "400176", "400177", "400178", "400179", "400180",
-    "400181", "400182", "400183", "400184", "400185",
-    "400186", "400187", "400188", "400189", "400190",
-    "400191", "400192", "400193", "400194", "400195",
-    "400196", "400197", "400198", "400199", "400200"
-]
+    with open('maharashtra_zipcodes.json', 'r') as f:
+        maharashtra_zipcodes = json.load(f)
 
     # Check if user's zipcode is in Maharashtra
     if user_zipcode in maharashtra_zipcodes:
