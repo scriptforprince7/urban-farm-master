@@ -727,6 +727,9 @@ def dashboard(request):
 def faq(request):
     return render(request, "core/faq.html")
 
+def thankyouorder(request):
+    return render(request, "core/thankyou-order.html")
+
 def shipping_policy(request):
     return render(request, "core/shipping-policy.html")
 
