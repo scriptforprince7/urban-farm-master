@@ -435,7 +435,10 @@ def payment_invoice(request):
 
     current_datetime = datetime.now() 
 
-    maharashtra_zipcodes = load_maharashtra_zipcodes()
+    with open('maharashtra_zipcodes.json', 'r') as f:
+        maharashtra_zipcodes = json.load(f)
+
+        print('payment',maharashtra_zipcodes)
 
     if 'cart_data_obj' in request.session:
     # Initialize dictionaries to store CGST, SGST, and IGST amounts for each product
@@ -616,6 +619,8 @@ def checkout_view(request):
 
     with open('maharashtra_zipcodes.json', 'r') as f:
         maharashtra_zipcodes = json.load(f)
+
+        print('codes',maharashtra_zipcodes)
 
     # Check if user's zipcode is in Maharashtra
     if user_zipcode in maharashtra_zipcodes:

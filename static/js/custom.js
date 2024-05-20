@@ -109,10 +109,6 @@ function updateCartItemsList(cartData) {
     $('.cart-subtotal').text(`₹ ${subtotalAmount.toFixed(2)}`);
 }
 
-
-
-    
-    
 $(document).ready(function(){
     // Event delegation for delete buttons
     $(document).on("click", ".delete-product", function(){
@@ -148,17 +144,32 @@ $(document).ready(function(){
                         $(".cart-items-count").text(response.totalcartitems);
                         $("#cart-list").html(response.data);
                         
-                        // Check if the page should be refreshed
-                        if (response.refresh_page) {
-                            // Refresh the page
-                            window.location.reload();
-                        }
+                        // Set a flag in local storage before refreshing the page
+                        localStorage.setItem('productDeleted', 'true');
+                        
+                        // Refresh the page
+                        window.location.reload();
                     }
                 });
             }
         });
     });
+
+    // Check if the productDeleted flag is set in local storage
+    if (localStorage.getItem('productDeleted') === 'true') {
+        // Show the alert that the product is deleted
+        Swal.fire({
+            title: 'Deleted!',
+            text: 'Product has been deleted.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+        
+        // Remove the flag from local storage
+        localStorage.removeItem('productDeleted');
+    }
 });
+
 
 
     
