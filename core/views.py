@@ -411,6 +411,7 @@ def blog_details(request, blog_slug):
 def grow_method(request):
     return render(request, "core/grow-method.html")
 
+
 def payment_invoice(request):
     razorpay_payment_id = request.GET.get('razorpay_payment_id')
     razorpay_order_id = request.GET.get('razorpay_order_id')
@@ -433,171 +434,182 @@ def payment_invoice(request):
     price_wo_gst_total = 0
     total_gst = 0
 
-    current_datetime = datetime.now() 
+    current_datetime = datetime.now()
 
     with open('maharashtra_zipcodes.json', 'r') as f:
         maharashtra_zipcodes = json.load(f)
 
-        print('payment',maharashtra_zipcodes)
+        print('payment', maharashtra_zipcodes)
 
     if 'cart_data_obj' in request.session:
-    # Initialize dictionaries to store CGST, SGST, and IGST amounts for each product
-       cgst_amounts = {}
-       sgst_amounts = {}
-       igst_amounts = {}
-       gst_amounts = {}
-       gst_amounts_combined = {}  # Dictionary to store aggregated GST amounts
+        # Initialize dictionaries to store CGST, SGST, and IGST amounts for each product
+        cgst_amounts = {}
+        sgst_amounts = {}
+        igst_amounts = {}
+        gst_amounts = {}
+        gst_amounts_combined = {}  # Dictionary to store aggregated GST amounts
 
-    # Calculate total amount, price without GST, and total GST
-    for p_id, item in request.session['cart_data_obj'].items():
-        total_amount += int(item['qty']) * Decimal(item['price'])
-        price_wo_gst_total += int(item['qty']) * Decimal(item.get('price_wo_gst', item['price']))
-        price_wo_gst_final = int(item['qty']) * Decimal(item.get('price_wo_gst', item['price']))
-        item_gst = (Decimal(item['price']) - Decimal(item.get('price_wo_gst', item['price']))) * int(
-            item['qty'])  # Calculate GST for this item
+        # Calculate total amount, price without GST, and total GST
+        for p_id, item in request.session['cart_data_obj'].items():
+            total_amount += int(item['qty']) * Decimal(item['price'])
+            price_wo_gst_total += int(item['qty']) * Decimal(item.get('price_wo_gst', item['price']))
+            price_wo_gst_final = int(item['qty']) * Decimal(item.get('price_wo_gst', item['price']))
+            item_gst = (Decimal(item['price']) - Decimal(item.get('price_wo_gst', item['price']))) * int(
+                item['qty'])  # Calculate GST for this item
 
-        # Calculate GST rates
-        if price_wo_gst_final != 0:
-            gst_rates_final = (item_gst / price_wo_gst_final) * 100
-        else:
-            gst_rates_final = Decimal('0')
+            # Calculate GST rates
+            if price_wo_gst_final != 0:
+                gst_rates_final = (item_gst / price_wo_gst_final) * 100
+            else:
+                gst_rates_final = Decimal('0')
 
-        item['gst_rates_final'] = gst_rates_final
+            item['gst_rates_final'] = gst_rates_final
 
-        # Divide the GST amount by 2 to get CGST and SGST separately
-        if zipcode in maharashtra_zipcodes:
-            # For Maharashtra zip codes, calculate CGST and SGST separately
-            igst_amount = Decimal('0')  # IGST will be 0
-            gst_rates_final = gst_rates_final / Decimal(2)
-        else:
-            # For non-Maharashtra zip codes, IGST will be double of CGST
-            igst_amount = item_gst
-            gst_rates_final = gst_rates_final
-       
+            # Divide the GST amount by 2 to get CGST and SGST separately
+            if zipcode in maharashtra_zipcodes:
+                # For Maharashtra zip codes, calculate CGST and SGST separately
+                igst_amount = Decimal('0')  # IGST will be 0
+                gst_rates_final = gst_rates_final / Decimal(2)
+            else:
+                # For non-Maharashtra zip codes, IGST will be double of CGST
+                igst_amount = item_gst
+                gst_rates_final = gst_rates_final
 
-        # Aggregate GST amounts based on GST rates
-        if gst_rates_final in gst_amounts:
-            gst_amounts[gst_rates_final] += item_gst
-        else:
-            gst_amounts[gst_rates_final] = item_gst
+            # Aggregate GST amounts based on GST rates
+            if gst_rates_final in gst_amounts:
+                gst_amounts[gst_rates_final] += item_gst
+            else:
+                gst_amounts[gst_rates_final] = item_gst
 
-        total_gst += item_gst
+            total_gst += item_gst
 
-    # Print CGST Amounts
-    print("CGST Amounts:")
-    for gst_rate, total_gst_amount in gst_amounts.items():
-        cgst_amount = total_gst_amount / Decimal(2)
-        print(f"CGST Amount: {cgst_amount}, GST Rate: {gst_rate}")
+        # Print CGST Amounts
+        print("CGST Amounts:")
+        for gst_rate, total_gst_amount in gst_amounts.items():
+            cgst_amount = total_gst_amount / Decimal(2)
+            print(f"CGST Amount: {cgst_amount}, GST Rate: {gst_rate}")
 
-    # Print SGST Amounts
-    print("\nSGST Amounts:")
-    for gst_rate, total_gst_amount in gst_amounts.items():
-        sgst_amount = total_gst_amount / Decimal(2)
-        print(f"SGST Amount: {sgst_amount}, GST Rate: {gst_rate}")
-    
-    print("\nIGST Amounts:")
-    for gst_rate, total_gst_amount in gst_amounts.items():
-        igst_amount = total_gst_amount
-        print(f"IGST Amount: {igst_amount}, GST Rate: {gst_rate}")
-    
-    print("GST Amounts:")
-    print(gst_amounts)
+        # Print SGST Amounts
+        print("\nSGST Amounts:")
+        for gst_rate, total_gst_amount in gst_amounts.items():
+            sgst_amount = total_gst_amount / Decimal(2)
+            print(f"SGST Amount: {sgst_amount}, GST Rate: {gst_rate}")
 
-    for gst_rate, total_gst_amount in gst_amounts.items():
-        cgst_amount = total_gst_amount / Decimal(2)
-        sgst_amount = total_gst_amount / Decimal(2)
-        gst_amounts_combined[gst_rate] = {'cgst': cgst_amount, 'sgst': sgst_amount}
+        print("\nIGST Amounts:")
+        for gst_rate, total_gst_amount in gst_amounts.items():
+            igst_amount = total_gst_amount
+            print(f"IGST Amount: {igst_amount}, GST Rate: {gst_rate}")
 
-    order = CartOrder.objects.create(
-        user=request.user,
-        price=total_amount
-    )
+        print("GST Amounts:")
+        print(gst_amounts)
 
-    for p_id, item in request.session['cart_data_obj'].items():
-        cart_total_amount += int(item['qty']) * float(item['price'])
+        for gst_rate, total_gst_amount in gst_amounts.items():
+            cgst_amount = total_gst_amount / Decimal(2)
+            sgst_amount = total_gst_amount / Decimal(2)
+            gst_amounts_combined[gst_rate] = {'cgst': cgst_amount, 'sgst': sgst_amount}
 
-        cart_order_products = CartOrderItems.objects.create(
-            order=order,
-            invoice_no="order_id-" + str(order.id),
-            item=item['title'],
-            image=item['image'],
-            qty=item['qty'],
-            price=item['price'],
-            total=float(item['qty']) * float(item['price'])
+        order = CartOrder.objects.create(
+            user=request.user,
+            price=total_amount
         )
 
-    cart_total_amount = 0
-    if 'cart_data_obj' in request.session:
-        with transaction.atomic():
-            for p_id, item in request.session['cart_data_obj'].items():
-                cart_total_amount += int(item['qty']) * float(item['price'])
-                product = Product.objects.get(pid=p_id)
-                client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
-                payment = client.order.create(
-                    {'amount': int(item['qty']) * float(item['price']) * 100, 'currency': 'INR',
-                     'payment_capture': 1})
-                product.razor_pay_order_id = payment['id']
-                product.save()
+        for p_id, item in request.session['cart_data_obj'].items():
+            cart_total_amount += int(item['qty']) * float(item['price'])
 
-    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
-    payment = client.order.create({'amount': cart_total_amount * 100, 'currency': 'INR', 'payment_capture': 1})
-    cart_total_amount_rounded = round(cart_total_amount, 2)
-    cart_total_amount_words = num2words(cart_total_amount_rounded, lang='en_IN')
+            cart_order_products = CartOrderItems.objects.create(
+                order=order,
+                invoice_no="order_id-" + str(order.id),
+                item=item['title'],
+                image=item['image'],
+                qty=item['qty'],
+                price=item['price'],
+                total=float(item['qty']) * float(item['price'])
+            )
 
-    invoice_number, created = InvoiceNumber.objects.get_or_create()
+        cart_total_amount = 0
+        if 'cart_data_obj' in request.session:
+            with transaction.atomic():
+                for p_id, item in request.session['cart_data_obj'].items():
+                    cart_total_amount += int(item['qty']) * float(item['price'])
+                    product = Product.objects.get(pid=p_id)
+                    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+                    payment = client.order.create(
+                        {'amount': int(item['qty']) * float(item['price']) * 100, 'currency': 'INR',
+                         'payment_capture': 1})
+                    product.razor_pay_order_id = payment['id']
+                    product.save()
 
-    # Increment the invoice number
-    invoice_number.increment()
+        client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+        payment = client.order.create({'amount': cart_total_amount * 100, 'currency': 'INR', 'payment_capture': 1})
+        cart_total_amount_rounded = round(cart_total_amount, 2)
+        cart_total_amount_words = num2words(cart_total_amount_rounded, lang='en_IN')
 
-    # Use the incremented invoice number for the current invoice
-    invoice_no = str(invoice_number)
+        invoice_number, created = InvoiceNumber.objects.get_or_create()
 
-    half_total_gst_amount = total_gst / Decimal(2)
+        # Increment the invoice number
+        invoice_number.increment()
 
-    context = {
-    "payment": payment,
-    "price_wo_gst_total": price_wo_gst_total,
-    "total_gst": total_gst,
-    "cgst_amounts": cgst_amounts,
-    "sgst_amounts": sgst_amounts,
-    "igst_amounts": igst_amounts,
-    "zipcode": zipcode,
-    "maharashtra_zipcodes": maharashtra_zipcodes,
-    'razorpay_payment_id': razorpay_payment_id,
-    'razorpay_order_id': razorpay_order_id,
-    'razorpay_signature': razorpay_signature,
-    'first_name': first_name,
-    'last_name': last_name,
-    'company_name': company_name,
-    'gst_number': gst_number,
-    'zipcode': zipcode,
-    'city': city,
-    'street_address': street_address,
-    'phone': phone,
-    'email': email,
-    "cgst_amount": cgst_amount,
-    "sgst_amount": sgst_amount,
-    "igst_amount" : igst_amount,
-    "igst_amounts" : igst_amounts,
-    "gst_rates_final": gst_rates_final,
-    "gst_rates_final": gst_rates_final,
-    "shipping_address": shipping_address,
-    "cart_total_amount_words": cart_total_amount_words,
-    'invoice_no': invoice_no,
-    "half_total_gst_amount": half_total_gst_amount,
-    "gst_amounts": gst_amounts,
-    "gst_rate": gst_rate,
-    "gst_amounts_combined": gst_amounts_combined,
-}
-    subject = 'Payment Invoice'
-    from_email = 'princesachdeva@nationalmarketingprojects.com'
-    to_email = email
-    html_message = render_to_string('core/payment_invoice.html', {'context': context})
-    plain_message = strip_tags(html_message)
+        # Use the incremented invoice number for the current invoice
+        invoice_no = str(invoice_number)
 
-    send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+        half_total_gst_amount = total_gst / Decimal(2)
 
-    return render(request, "core/payment_invoice.html", {'current_datetime': current_datetime, 'cart_data': request.session.get('cart_data_obj', {}), 'totalcartitems': len(request.session.get('cart_data_obj', {})), 'cart_total_amount': cart_total_amount, **context})
+        context = {
+            "payment": payment,
+            "price_wo_gst_total": price_wo_gst_total,
+            "total_gst": total_gst,
+            "cgst_amounts": cgst_amounts,
+            "sgst_amounts": sgst_amounts,
+            "igst_amounts": igst_amounts,
+            "zipcode": zipcode,
+            "maharashtra_zipcodes": maharashtra_zipcodes,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_signature': razorpay_signature,
+            'first_name': first_name,
+            'last_name': last_name,
+            'company_name': company_name,
+            'gst_number': gst_number,
+            'zipcode': zipcode,
+            'city': city,
+            'street_address': street_address,
+            'phone': phone,
+            'email': email,
+            "cgst_amount": cgst_amount,
+            "sgst_amount": sgst_amount,
+            "igst_amount": igst_amount,
+            "igst_amounts": igst_amounts,
+            "gst_rates_final": gst_rates_final,
+            "shipping_address": shipping_address,
+            "cart_total_amount_words": cart_total_amount_words,
+            'invoice_no': invoice_no,
+            "half_total_gst_amount": half_total_gst_amount,
+            "gst_amounts": gst_amounts,
+            "gst_rate": gst_rate,
+            "gst_amounts_combined": gst_amounts_combined,
+            'cart_data': request.session.get('cart_data_obj', {}),
+            'totalcartitems': len(request.session.get('cart_data_obj', {})),
+            'cart_total_amount': cart_total_amount,
+        }
+        subject = 'Payment Invoice'
+        from_email = 'princesachdeva@nationalmarketingprojects.com'
+        to_email = email
+        html_message = render_to_string('core/payment_invoice.html', {'context': context})
+        plain_message = strip_tags(html_message)
+
+        send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+
+        # Render the invoice before clearing the cart data
+        response = render(request, "core/payment_invoice.html", context)
+
+        # Clear cart data after successful purchase and rendering the invoice
+        if 'cart_data_obj' in request.session:
+            del request.session['cart_data_obj']
+            request.session.modified = True
+
+        return response
+
+
 
 def load_maharashtra_zipcodes():
     try:
