@@ -162,6 +162,7 @@ $(document).ready(function(){
             title: 'Deleted!',
             text: 'Product has been deleted.',
             icon: 'success',
+            timer: 2000, // 1 second
             confirmButtonText: 'OK'
         });
         
@@ -169,9 +170,6 @@ $(document).ready(function(){
         localStorage.removeItem('productDeleted');
     }
 });
-
-
-
     
 
     $(document).ready(function(){
