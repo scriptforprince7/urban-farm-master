@@ -508,8 +508,16 @@ def payment_invoice(request):
             sgst_amount = total_gst_amount / Decimal(2)
             gst_amounts_combined[gst_rate] = {'cgst': cgst_amount, 'sgst': sgst_amount}
 
-        order = CartOrder.objects.create(
-            user=request.user,
+             # Check if the user is authenticated
+        if request.user.is_authenticated:
+            # If the user is logged in, associate the order with the logged-in user
+            order = CartOrder.objects.create(
+            user=request.user,  # Use the logged-in user
+            price=total_amount
+        )
+        else:
+            # If the user is not logged in, create the order without associating it with any user
+            order = CartOrder.objects.create(
             price=total_amount
         )
 
@@ -594,7 +602,7 @@ def payment_invoice(request):
         subject = 'Payment Invoice'
         from_email = 'princesachdeva@nationalmarketingprojects.com'
         to_email = email
-        html_message = render_to_string('core/payment_invoice.html', {'context': context})
+        html_message = render_to_string('core/thankyou-order.html', {'context': context})
         plain_message = strip_tags(html_message)
 
         send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)

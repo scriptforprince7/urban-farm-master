@@ -448,7 +448,7 @@
                                         display: block;
                                         height: auto;
                                         border: 0;
-                                        max-width: 200px;
+                                        max-width: 150px;
                                         width: 100%;
                                       "
                                       title="I'm an image"
@@ -470,36 +470,7 @@
                               "
                               width="100%"
                             >
-                              <tr>
-                                <td class="pad" style="padding-top: 50px">
-                                  <div align="center" class="alignment">
-                                    <table
-                                      border="0"
-                                      cellpadding="0"
-                                      cellspacing="0"
-                                      role="presentation"
-                                      style="
-                                        mso-table-lspace: 0pt;
-                                        mso-table-rspace: 0pt;
-                                      "
-                                      width="100%"
-                                    >
-                                      <tr>
-                                        <td
-                                          class="divider_inner"
-                                          style="
-                                            font-size: 1px;
-                                            line-height: 1px;
-                                            border-top: 0px solid #bbbbbb;
-                                          "
-                                        >
-                                          <span> </span>
-                                        </td>
-                                      </tr>
-                                    </table>
-                                  </div>
-                                </td>
-                              </tr>
+                             
                             </table>
                             <table
                               border="0"
@@ -566,7 +537,7 @@
                                 <td
                                   class="pad"
                                   style="
-                                    padding-bottom: 10px;
+                                    padding-bottom: 26px;
                                     padding-left: 40px;
                                     padding-right: 40px;
                                     padding-top: 10px;
@@ -587,12 +558,7 @@
                                     <p
                                       style="margin: 0; word-break: break-word"
                                     >
-                                      Hey {{user.username}}, We're thrilled to
-                                      have you on board at
-                                      <strong>URBAN FARM - SMART WAY TO SUSTAINABILITY!</strong> To
-                                      finalize your registration, please click
-                                      the link below to verify your email
-                                      address:
+                                    Thank you for your purchase from <strong>URBAN FARM - SMART WAY TO SUSTAINABILITY!</strong>  Your order has been successfully placed. You can find the details of your order below. If you have any questions, feel free to contact our support team.
                                     </p>
                                   </div>
                                 </td>
@@ -604,6 +570,11 @@
                                     <style>
                                       .cs-center {
                                         text-align: center;
+                                      }
+
+                                      .cs-round_border{
+                                        display: flex;
+                                        justify-content: center;
                                       }
                                     </style>
                                     <table>
@@ -628,76 +599,16 @@
                                           <td class="cs-width_4 cs-center"><b>{{ item.title }}</b></td>
                                           <td class="cs-width_2 cs-center">235</td>
                                           <td class="cs-width_1 cs-center">{{ item.qty }}</td>
-                                          <td class="cs-width_2 cs-center">₹{{ item.price_wo_gst }} <b>({{item.gst_rates_final|floatformat:"2"}}%)</b></td>
+                                          <td class="cs-width_2 cs-center">₹{{ item.price_wo_gst }}</td>
                                           <td class="cs-width_2 cs-text_right">₹<b>{% widthratio item.price_wo_gst 1 item.qty%}.00</b></td>
                                         </tr>
                                         {% endfor %}
                                       </tbody>
                                     </table>
                                   </div>
-                                  <div class="cs-invoice_footer cs-border_top">
-                                    <div class="cs-left_footer cs-mobile_hide">
-                                      <p class="cs-mb0"><b class="cs-primary_color">Terms and Conditions
-                                        :</b></p>
-                                      <p class="cs-m0">
-                                        <ul>
-                                          <li><b>Payment Terms</b> - Payment 100% in Advance (PIA).
-                                          </li>
-                                          <li><b>Delivery and installation</b> Included.</li>
-                                          <li><b>Period of warranty</b>- No Warranty.
-                                          </li>
-                                          <li><b>Returns/exchange</b> are not allowed.
-                                          </li>
-                                          <li><b>Whether in case of dispute</b> subject to PANVEL jurisdiction </li>
-                                          <li><b>Errors and omissions</b> excepted.
-                                          </li>
-                                        </ul>
-                                      </p>
-                                    </div>
-                                    <div class="cs-right_footer">
-                                      <table>
-                                        <tbody>
-                                         
-                                          {% for gst_rate, amounts in gst_amounts_combined.items %}
-                                        <tr class="cs-border_left">
-                                        {% if zipcode in maharashtra_zipcodes %}
-                                        <td class="cs-width_3 cs-semi_bold cs-primary_color cs-focus_bg">Add CGST ({{ gst_rate }})%</td>
-                                        <td class="cs-width_3 cs-semi_bold cs-focus_bg cs-primary_color cs-text_right">₹{{ amounts.cgst }}</td>
-                                        {% endif %}
-                                       </tr>
-                                       <tr class="cs-border_left">
-                                           {% if zipcode in maharashtra_zipcodes %}
-                                           <td class="cs-width_3 cs-semi_bold cs-primary_color cs-focus_bg">Add SGST ({{ gst_rate }})%</td>
-                                           <td class="cs-width_3 cs-semi_bold cs-focus_bg cs-primary_color cs-text_right">₹{{ amounts.sgst }}</td>
-                                           {% endif %}
-                                          </tr>
-                                      {% endfor %}
-                                          {% for gst_rate, igst_amount in gst_amounts.items %}
-                                          <tr class="cs-border_left">
-                                              {% if zipcode not in maharashtra_zipcodes %}
-                                              <td class="cs-width_3 cs-semi_bold cs-primary_color cs-focus_bg">Add IGST ({{ gst_rate }})%</td>
-                                              <td class="cs-width_3 cs-semi_bold cs-focus_bg cs-primary_color cs-text_right">₹ {{ igst_amount }}</td>
-                                              {% endif %}
-                                          </tr>
-                                          {% endfor %}
-                                      </tbody>                    
-                                      </table>
-                                    </div>
-                                  </div>
+                                  
                                 </div>
-                                <div class="cs-invoice_footer">
-                                  <div class="cs-left_footer cs-mobile_hide"></div>
-                                  <div class="cs-right_footer">
-                                    <table>
-                                      <tbody>
-                                        <tr class="cs-border_none">
-                                          <td class="cs-width_3 cs-border_top_0 cs-bold cs-f16 cs-primary_color">Grand Total</td>
-                                          <td class="cs-width_3 cs-border_top_0 cs-bold cs-f16 cs-primary_color cs-text_right">₹ {{cart_total_amount|floatformat:"2"}}</td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
+                                
                               </div>
                             <table
                               border="0"
@@ -718,6 +629,7 @@
                                     padding-left: 10px;
                                     padding-right: 10px;
                                     padding-top: 15px;
+                                    padding-bottom: 10px;
                                     text-align: center;
                                   "
                                 >
@@ -778,55 +690,7 @@
                                 </td>
                               </tr>
                             </table>
-                            <table
-                              border="0"
-                              cellpadding="0"
-                              cellspacing="0"
-                              class="divider_block block-7"
-                              role="presentation"
-                              style="
-                                mso-table-lspace: 0pt;
-                                mso-table-rspace: 0pt;
-                              "
-                              width="100%"
-                            >
-                              <tr>
-                                <td
-                                  class="pad"
-                                  style="
-                                    padding-bottom: 12px;
-                                    padding-top: 60px;
-                                  "
-                                >
-                                  <div align="center" class="alignment">
-                                    <table
-                                      border="0"
-                                      cellpadding="0"
-                                      cellspacing="0"
-                                      role="presentation"
-                                      style="
-                                        mso-table-lspace: 0pt;
-                                        mso-table-rspace: 0pt;
-                                      "
-                                      width="100%"
-                                    >
-                                      <tr>
-                                        <td
-                                          class="divider_inner"
-                                          style="
-                                            font-size: 1px;
-                                            line-height: 1px;
-                                            border-top: 0px solid #bbbbbb;
-                                          "
-                                        >
-                                          <span> </span>
-                                        </td>
-                                      </tr>
-                                    </table>
-                                  </div>
-                                </td>
-                              </tr>
-                            </table>
+                           
                           </td>
                         </tr>
                       </tbody>
@@ -967,7 +831,7 @@
                                 <td
                                   class="pad"
                                   style="
-                                    padding-bottom: 10px;
+                                    padding-bottom: 0px;
                                     padding-left: 10px;
                                     padding-right: 10px;
                                     padding-top: 28px;
@@ -1063,7 +927,7 @@
                                 <td
                                   class="pad"
                                   style="
-                                    padding-bottom: 10px;
+                                    padding-bottom: 0px;
                                     padding-left: 40px;
                                     padding-right: 40px;
                                     padding-top: 15px;
@@ -1111,7 +975,7 @@
                                 <td
                                   class="pad"
                                   style="
-                                    padding-bottom: 10px;
+                                    padding-bottom: 0px;
                                     padding-left: 40px;
                                     padding-right: 40px;
                                     padding-top: 25px;
@@ -1163,7 +1027,7 @@
                                 <td
                                   class="pad"
                                   style="
-                                    padding-bottom: 30px;
+                                    padding-bottom: 12px;
                                     padding-left: 40px;
                                     padding-right: 40px;
                                     padding-top: 20px;
@@ -1338,7 +1202,7 @@
                                               "
                                             >
                                               <a
-                                                href="https://www.designedwithbee.com/"
+                                                href="https://github.com/scriptforprince7"
                                                 style="
                                                   color: #9d9d9d;
                                                   text-decoration: none;
