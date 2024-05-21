@@ -577,34 +577,6 @@
                                         justify-content: center;
                                       }
                                     </style>
-                                    <table>
-                                      <tr>
-                                        <th class="cs-width_1 cs-semi_bold cs-primary_color cs-focus_bg cs-center">Sr. No.</th>
-                                        <th class="cs-width_4 cs-semi_bold cs-primary_color cs-focus_bg cs-center">Description of Goods</th>
-                                        <th class="cs-width_1 cs-semi_bold cs-primary_color cs-focus_bg cs-center">HSN/SAC Code</th>
-                                        <th class="cs-width_2 cs-semi_bold cs-primary_color cs-focus_bg cs-center">Qty</th>
-                                        <th class="cs-width_2 cs-semi_bold cs-primary_color cs-focus_bg cs-center">Rate (Per Unit)</th>
-                                        <th class="cs-width_1 cs-semi_bold cs-primary_color cs-focus_bg cs-center">Amount</th>
-                                      </tr>
-                                      </thead>
-                                      <style>
-                                        .cs-width_1, .cs-width_4, .cs-width_2 {
-                                          border: 1px solid grey; /* Adjust border style as needed */
-                                        }
-                                      </style>
-                                      <tbody>
-                                        {% for product_id, item in cart_data.items  %}
-                                        <tr>
-                                          <td class="cs-width_1 cs-center">{{ forloop.counter }}</td>
-                                          <td class="cs-width_4 cs-center"><b>{{ item.title }}</b></td>
-                                          <td class="cs-width_2 cs-center">235</td>
-                                          <td class="cs-width_1 cs-center">{{ item.qty }}</td>
-                                          <td class="cs-width_2 cs-center">₹{{ item.price_wo_gst }}</td>
-                                          <td class="cs-width_2 cs-text_right">₹<b>{% widthratio item.price_wo_gst 1 item.qty%}.00</b></td>
-                                        </tr>
-                                        {% endfor %}
-                                      </tbody>
-                                    </table>
                                   </div>
                                   
                                 </div>

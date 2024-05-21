@@ -28,6 +28,11 @@ from bs4 import BeautifulSoup
 from indian_pincode_details import get_pincode_details
 import indiapins
 import json
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from xhtml2pdf import pisa
+from io import BytesIO
 
 
 def index(request):
@@ -598,6 +603,7 @@ def payment_invoice(request):
             'cart_data': request.session.get('cart_data_obj', {}),
             'totalcartitems': len(request.session.get('cart_data_obj', {})),
             'cart_total_amount': cart_total_amount,
+            'cart_items': request.session.get('cart_data_obj', {})
         }
         subject = 'Payment Invoice'
         from_email = 'princesachdeva@nationalmarketingprojects.com'
@@ -605,7 +611,21 @@ def payment_invoice(request):
         html_message = render_to_string('core/thankyou-order.html', {'context': context})
         plain_message = strip_tags(html_message)
 
-        send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+         # Generate PDF using xhtml2pdf
+        html_template = render_to_string('core/payment_invoice.html', context)
+        pdf_file = BytesIO()
+        pisa_status = pisa.CreatePDF(html_template, dest=pdf_file)
+        pdf_file.seek(0)
+
+        # Create the email message
+        email_message = EmailMultiAlternatives(subject, plain_message, from_email, [to_email])
+        email_message.attach_alternative(html_message, "text/html")
+
+        if not pisa_status.err:
+            email_message.attach('invoice.pdf', pdf_file.read(), 'application/pdf')
+
+         # Send the email
+        email_message.send()
 
         # Render the invoice before clearing the cart data
         response = render(request, "core/payment_invoice.html", context)
@@ -616,8 +636,6 @@ def payment_invoice(request):
             request.session.modified = True
 
         return response
-
-
 
 def load_maharashtra_zipcodes():
     try:
