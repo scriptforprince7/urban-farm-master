@@ -1,6 +1,6 @@
-bind = "unix:/python/panipat-deploy/ecomproj.sock"
+bind = "unix:/python/urbanfarm/ecomproj.sock"
 workers = 3
-chdir = "/python/panipat-deploy/"
+chdir = "/python/urbanfarm/"
 module = "ecomproj.wsgi:application"
 user = "root"
 group = "root"
